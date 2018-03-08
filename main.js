@@ -15,8 +15,11 @@ function initCanvas(canvas) {
     canvas.addEventListener("dblclick", requestFullscreen)
 }
 
+var fps_p = null;
+
 window.onload = function() {
     const canvas = document.getElementById("glcanvas");
+    fps_p = document.getElementById("fps_p");
 
     initCanvas(canvas);
 
@@ -30,7 +33,6 @@ window.onload = function() {
 
     // console.log("Lalaka");
     draw(gl);
-    // window.addEventListener("keypress", glKeyPressedListener, false);
-    window.addEventListener("keydown", glKeyDownListener, false);
-    window.addEventListener("keyup", glKeyUpListener, false);
+
+    setupKeyListeners(window);
 };

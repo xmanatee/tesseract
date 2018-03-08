@@ -1,16 +1,15 @@
 var key_triggers = {};
 key_triggers['w'] = function () {
-    stright_velocity = 1;
+    stright_velocity = MAX_VELOCITY;
 };
 key_triggers['s'] = function () {
-    stright_velocity = -1;
+    stright_velocity = -MAX_VELOCITY;
 };
 key_triggers['a'] = function () {
-    side_velocity = 1;
-
+    side_velocity = MAX_VELOCITY;
 };
 key_triggers['d'] = function () {
-    side_velocity = -1;
+    side_velocity = -MAX_VELOCITY;
 };
 
 function glKeyPressedListener(event){
@@ -22,14 +21,12 @@ function glKeyPressedListener(event){
 
 var keys = new Set();
 function glKeyDownListener(event) {
-    // console.log("lal", event);
     event = event || window.event;
     var key = event.key || event.which || event.key;
     keys.add(key);
 }
 
 function glKeyUpListener(event) {
-    // console.log("lal", event);
     event = event || window.event;
     var key = event.key || event.which || event.key;
     keys.delete(key);
@@ -37,10 +34,25 @@ function glKeyUpListener(event) {
 
 function checkKeys() {
     keys.forEach(key => {
-        // console.log("l", key);
-        // console.log(KeypressFunctions);
         if (key in key_triggers) {
             key_triggers[key]();
         }
     })
+}
+
+function glMouseMoveListener(event) {
+    view_lat += MAX_TURN * event.movementY;
+    if (view_lat > MAX_LAT) {
+        view_lat = MAX_LAT;
+    } else if (view_lat < -MAX_LAT) {
+        view_lat = -MAX_LAT;
+    }
+    view_lon += MAX_TURN * event.movementX;
+}
+
+function setupKeyListeners(window) {
+    // window.addEventListener("keypress", glKeyPressedListener, false);
+    window.addEventListener("keydown", glKeyDownListener, false);
+    window.addEventListener("keyup", glKeyUpListener, false);
+    window.addEventListener("mousemove", glMouseMoveListener, false)
 }

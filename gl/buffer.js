@@ -1,6 +1,7 @@
 // var initBuffers = initCubeBuffers;
 var initBuffers = initThorBuffers;
 
+
 function initThorBuffers(gl, r_big=3, num_big=3, r_small=1, num_small=3) {
     var positions = [];
     var normals = [];
@@ -60,11 +61,14 @@ function initThorBuffers(gl, r_big=3, num_big=3, r_small=1, num_small=3) {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
         new Uint16Array(elements), gl.STATIC_DRAW);
 
+    const numTriangles = 2 * num_big * num_small;
+
     return {
         position: positionBuffer,
         color: colorBuffer,
         normal: normalBuffer,
         indices: indexBuffer,
+        numVertices: 3 * numTriangles,
     };
 }
 
@@ -196,10 +200,13 @@ function initCubeBuffers(gl) {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
         new Uint16Array(indices), gl.STATIC_DRAW);
 
+    const numTriangles = 2 * 6;
+
     return {
         position: positionBuffer,
         color: colorBuffer,
         normal: normalBuffer,
         indices: indexBuffer,
+        numVertices: 3 * numTriangles,
     };
 }
