@@ -3,19 +3,16 @@ var x = 0.0;
 var y = 0.0;
 var z = -6.0;
 
-const MAX_TURN = 0.007;
+const MAX_TURN = 0.003;
 const MAX_LAT = 1;
 var view_lat = 0;
 var view_lon = 0;
 
-const MAX_VELOCITY = 4.0;
+const MAX_VELOCITY = 5.0;
 var stright_velocity = 0;
 var side_velocity = 0;
 
 var cubeRotation = 0.0;
-
-var thor_num_big = 200;
-var thor_num_small = 30;
 
 const FPS_LR = 0.1;
 var fps = 0;
@@ -37,7 +34,20 @@ function draw(gl) {
         },
     };
 
-    const buffers = initBuffers(gl, 1, thor_num_big, 0.5, thor_num_small);
+    const kwargs = {
+        cube_half_side: 100,
+
+        thor_r_big: 2,
+        thor_num_lon: 200,
+        thor_r_small: 1,
+        thor_num_lat: 30,
+
+        sphere_r: 0.5,
+        sphere_num_lon: 100,
+        sphere_num_lat: 100,
+    };
+
+    const buffers = initBuffers(gl, kwargs);
 
     drawScene(gl, programInfo, buffers);
 

@@ -23,7 +23,7 @@ window.onload = function() {
 
     initCanvas(canvas);
 
-    const gl = canvas.getContext("webgl");
+    const gl = canvas.getContext("webgl2");
 
     // Only continue if WebGL is available and working
     if (!gl) {

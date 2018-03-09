@@ -1,80 +1,133 @@
-// var initBuffers = initCubeBuffers;
-var initBuffers = initThorBuffers;
+// const buildMesh = buildThorMesh;
+// const buildMesh = buildCubeMesh;
+const buildMesh = buildMultiMesh;
 
-
-function initThorBuffers(gl, r_big=3, num_big=3, r_small=1, num_small=3) {
-    var positions = [];
-    var normals = [];
-    var textures = [];
-    var colors = [];
-    var elements = [];
-    for (var b = 0; b < num_big; b++) {
-        for (var s = 0; s < num_small; s++) {
-            var u = 2 * Math.PI * b / num_big;
-            var v = 2 * Math.PI * s / num_small;
-            var x = (r_big + r_small * Math.cos(v)) * Math.cos(u);
-            var y = (r_big + r_small * Math.cos(v)) * Math.sin(u);
-            var z = r_small * Math.sin(v);
-            var nx = Math.cos(v) * Math.cos(u);
-            var ny = Math.cos(v) * Math.sin(u);
-            var nz = Math.sin(v);
-            // console.log(x, y, z);
-            textures.push(u, v);
-            positions.push(x, y, z);
-            colors.push(1 + 0.5 * Math.cos(u), 0, 1 + 0.5 * Math.cos(v), 1);
-            normals.push(nx, ny, nz);
-
-            var b_2 = (b + 1) % num_big;
-            var s_2 = (s + 1) % num_small;
-
-            var i_1 = b * num_small + s;
-            var i_2 = b * num_small + s_2;
-            var i_3 = b_2 * num_small + s;
-            var i_4 = b_2 * num_small + s_2;
-            // console.log(i_1, i_2, i_3, i_4);
-            elements.push(i_1, i_2, i_4);
-            elements.push(i_1, i_4, i_3);
-
-        }
-    }
+function initBuffers(gl, kwargs) {
+    const mesh = buildMesh(kwargs);
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        new Float32Array(positions),
-        gl.STATIC_DRAW);
-
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.positions), gl.STATIC_DRAW);
 
     const normalBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals),
-        gl.STATIC_DRAW);
-
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.normals), gl.STATIC_DRAW);
 
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.colors), gl.STATIC_DRAW);
 
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-        new Uint16Array(elements), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.elements), gl.STATIC_DRAW);
 
-    const numTriangles = 2 * num_big * num_small;
+    const numVertices = mesh.elements.length;
 
     return {
         position: positionBuffer,
         color: colorBuffer,
         normal: normalBuffer,
         indices: indexBuffer,
-        numVertices: 3 * numTriangles,
+        numVertices: numVertices,
     };
 }
 
+function buildThorMesh(kwargs) {
+    const r_big = kwargs.thor_r_big;
+    const num_lon = kwargs.thor_num_lon;
+    const r_small = kwargs.thor_r_small;
+    const num_lat = kwargs.thor_num_lat;
 
+    var positions = [];
+    var normals = [];
+    var textures = [];
+    var colors = [];
+    var elements = [];
+    for (var i_lon = 0; i_lon < num_lon; i_lon++) {
+        for (var i_lat = 0; i_lat < num_lat; i_lat++) {
+            var u = 2 * Math.PI * i_lon / num_lon;
+            var v = 2 * Math.PI * i_lat / num_lat;
+            var x = (r_big + r_small * Math.cos(v)) * Math.cos(u);
+            var y = (r_big + r_small * Math.cos(v)) * Math.sin(u);
+            var z = r_small * Math.sin(v);
+            var nx = Math.cos(v) * Math.cos(u);
+            var ny = Math.cos(v) * Math.sin(u);
+            var nz = Math.sin(v);
+            textures.push(u, v);
+            positions.push(x, y, z);
+            colors.push(1 + 0.5 * Math.cos(u), 0, 1 + 0.5 * Math.cos(v), 1);
+            normals.push(nx, ny, nz);
 
-function initCubeBuffers(gl) {
+            var i_lon_2 = (i_lon + 1) % num_lon;
+            var i_lat_2 = (i_lat + 1) % num_lat;
+            var i_1 = i_lon * num_lat + i_lat;
+            var i_2 = i_lon * num_lat + i_lat_2;
+            var i_3 = i_lon_2 * num_lat + i_lat;
+            var i_4 = i_lon_2 * num_lat + i_lat_2;
+            elements.push(i_1, i_2, i_4);
+            elements.push(i_1, i_4, i_3);
+
+        }
+    }
+    return {
+        positions: positions,
+        normals: normals,
+        textures: textures,
+        colors: colors,
+        elements: elements,
+    }
+}
+
+function buildSphereMesh(kwargs) {
+    const r = kwargs.sphere_r;
+    const num_lon = kwargs.sphere_num_lon;
+    const num_lat = kwargs.sphere_num_lat;
+
+    var positions = [];
+    var normals = [];
+    var textures = [];
+    var colors = [];
+    var elements = [];
+    for (var i_lon = 0; i_lon < num_lon; i_lon++) {
+        for (var i_lat = 0; i_lat < num_lat; i_lat++) {
+            var u = 2 * Math.PI * i_lon / num_lon;
+            var v = - Math.PI + 2 * Math.PI * i_lat / num_lat;
+            var x = r * Math.cos(v) * Math.cos(u);
+            var y = r * Math.cos(v) * Math.sin(u);
+            var z = r * Math.sin(v);
+            var nx = Math.cos(v) * Math.cos(u);
+            var ny = Math.cos(v) * Math.sin(u);
+            var nz = Math.sin(v);
+            textures.push(u, v);
+            positions.push(x, y, z);
+            colors.push(0, 0.5 + 0.5 * Math.sin(v), 0.5 - 0.5 * Math.sin(v), 1);
+            normals.push(nx, ny, nz);
+
+            var i_lon_2 = (i_lon + 1) % num_lon;
+            var i_lat_2 = i_lat + 1;
+            if (i_lat_2 === num_lat) {
+                continue;
+            }
+            var i_1 = i_lon * num_lat + i_lat;
+            var i_2 = i_lon * num_lat + i_lat_2;
+            var i_3 = i_lon_2 * num_lat + i_lat;
+            var i_4 = i_lon_2 * num_lat + i_lat_2;
+            elements.push(i_1, i_2, i_4);
+            elements.push(i_1, i_4, i_3);
+
+        }
+    }
+    return {
+        positions: positions,
+        normals: normals,
+        textures: textures,
+        colors: colors,
+        elements: elements,
+    }
+}
+
+function buildCubeMesh(kwargs) {
+    const cube_half_side = kwargs.cube_half_side;
 
     const positions = [
         // Front face
@@ -112,15 +165,11 @@ function initCubeBuffers(gl) {
         -1.0, -1.0,  1.0,
         -1.0,  1.0,  1.0,
         -1.0,  1.0, -1.0,
-    ];
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER,
-        new Float32Array(positions),
-        gl.STATIC_DRAW);
+    ].map(function (coord) {
+        return coord * cube_half_side;
+    });
 
-
-    const vertexNormals = [
+    const normals = [
         // Front
         0.0,  0.0,  1.0,
         0.0,  0.0,  1.0,
@@ -157,35 +206,23 @@ function initCubeBuffers(gl) {
         -1.0,  0.0,  0.0,
         -1.0,  0.0,  0.0
     ];
-    const normalBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
-        gl.STATIC_DRAW);
 
-
+    const up = 0.1;
     const faceColors = [
-        [1.0,  1.0,  1.0,  1.0],    // Front face: white
-        [1.0,  0.0,  0.0,  1.0],    // Back face: red
-        [0.0,  1.0,  0.0,  1.0],    // Top face: green
-        [0.0,  0.0,  1.0,  1.0],    // Bottom face: blue
-        [1.0,  1.0,  0.0,  1.0],    // Right face: yellow
-        [1.0,  0.0,  1.0,  1.0],    // Left face: purple
+        [up,  0.0,  0.0,  1.0],    // Front face: white
+        [0.0,  up,  0.0,  1.0],    // Back face: red
+        [0.0,  0.0,  up,  1.0],    // Top face: green
+        [0.0,  up,  up,  1.0],    // Bottom face: blue
+        [up,  up,  0.0,  1.0],    // Right face: yellow
+        [up,  0.0,  up,  1.0],    // Left face: purple
     ];
     var colors = [];
     for (var j = 0; j < faceColors.length; ++j) {
         const c = faceColors[j];
         colors = colors.concat(c, c, c, c);
     }
-    const colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-
-    // This array defines each face as two triangles, using the
-    // indices into the vertex array to specify each triangle's
-    // position.
-
-    const indices = [
+    const elements = [
         0,  1,  2,      0,  2,  3,    // front
         4,  5,  6,      4,  6,  7,    // back
         8,  9,  10,     8,  10, 11,   // top
@@ -194,19 +231,37 @@ function initCubeBuffers(gl) {
         20, 21, 22,     20, 22, 23,   // left
     ];
 
-    // Now send the element array to GL
-    const indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-        new Uint16Array(indices), gl.STATIC_DRAW);
-
-    const numTriangles = 2 * 6;
+    const textures = [];
 
     return {
-        position: positionBuffer,
-        color: colorBuffer,
-        normal: normalBuffer,
-        indices: indexBuffer,
-        numVertices: 3 * numTriangles,
+        positions: positions,
+        normals: normals,
+        textures: textures,
+        colors: colors,
+        elements: elements,
+    }
+}
+
+function buildMultiMesh(kwargs) {
+    var result_mesh = {
+        positions: [],
+        normals: [],
+        textures: [],
+        colors: [],
+        elements: [],
     };
+
+    const mesh_builders = [buildCubeMesh, buildThorMesh, buildSphereMesh];
+    for (var i = 0; i < mesh_builders.length; i++) {
+        const mesh = mesh_builders[i](kwargs);
+        const elements_offset = result_mesh.positions.length / 3;
+        result_mesh.positions = result_mesh.positions.concat(mesh.positions);
+        result_mesh.normals = result_mesh.normals.concat(mesh.normals);
+        result_mesh.textures = result_mesh.textures.concat(mesh.textures);
+        result_mesh.colors = result_mesh.colors.concat(mesh.colors);
+        result_mesh.elements = result_mesh.elements.concat(mesh.elements.map(function (id) {
+            return id + elements_offset;
+        }));
+    }
+    return result_mesh;
 }
