@@ -1,7 +1,11 @@
+html, body {
+    overflow-x: hidden;
+}
 body, #glcanvas {
     margin: 0;
     outline: 0;
     border: 0;
+    position: relative;
 }
 
 #debug_div {
@@ -19,6 +23,6 @@ body, #glcanvas {
     /*padding: 0;*/
 }
 
-* {
+#glcanvas {
     cursor: none;
 }

@@ -1,6 +1,7 @@
-test/*
-textures/*
+test/
+textures/
 .idea/
+.DS_Store
 
 # Logs
 logs

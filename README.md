@@ -11,8 +11,8 @@ TODO:
 * Shooting
 * WebRtc p2p game
 
-Check it out: [https://xmanatee.github.io/tesseract]
+Check it out on [gh-pages](https://xmanatee.github.io/tesseract)
 
-All Textures taken from [https://3dtextures.me/category/lava]
+All Textures taken from [here](https://3dtextures.me/category/lava)
 
-
+Tutorials on WebGL [here](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Getting_started_with_WebGL)
