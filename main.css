@@ -8,7 +8,15 @@ body, #glcanvas {
     position: absolute;
     top: 0;
     left: 0;
-    color: purple;
+    background: rgba(0, 0, 0, 0.6);
+    color: lightgray;
+    padding: 6px;
+    font-size: 13px;
+
+}
+#debug_div > p {
+    margin: 0;
+    /*padding: 0;*/
 }
 
 * {
