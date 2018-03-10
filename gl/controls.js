@@ -12,12 +12,11 @@ key_triggers['d'] = function () {
     side_velocity = -MAX_VELOCITY;
 };
 
-function glKeyPressedListener(event){
-    // console.log("lal", event);
-    event = event || window.event;
-    var key = event.keyCode || event.which || event.key;
-    key_triggers[key]();
-}
+// function glKeyPressedListener(event){
+//     event = event || window.event;
+//     var key = event.keyCode || event.which || event.key;
+//     key_triggers[key]();
+// }
 
 var keys = new Set();
 function glKeyDownListener(event) {

@@ -17,6 +17,12 @@ var cubeRotation = 0.0;
 const FPS_LR = 0.1;
 var fps = 0;
 
+const texture_file = 'textures/Lava_001_COLOR.png';
+// const texture_file = 'textures/Lava_002_COLOR.png';
+// const texture_file = 'textures/Strawberry_milkshake_foam_001_NORM.jpg';
+// const texture_file = 'textures/Tiles_012_COLOR.jpg';
+// const texture_file = 'textures/Gold_Nugget_001_DISP.png';
+
 function draw(gl) {
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
@@ -24,32 +30,35 @@ function draw(gl) {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+            textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
             vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
-            vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
+            // vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
             normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
+            uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
         },
     };
 
     const kwargs = {
-        cube_half_side: 100,
+        cube_half_side: 30,
 
         thor_r_big: 2,
         thor_num_lon: 200,
         thor_r_small: 1,
         thor_num_lat: 30,
 
-        sphere_r: 0.5,
+        sphere_r: 20,
         sphere_num_lon: 100,
         sphere_num_lat: 100,
     };
 
     const buffers = initBuffers(gl, kwargs);
+    const texture = loadTexture(gl, texture_file);
 
-    drawScene(gl, programInfo, buffers);
+    drawScene(gl, programInfo, buffers, texture);
 
     var then = 0;
     function render(now) {
@@ -67,14 +76,14 @@ function draw(gl) {
         fps = fps + FPS_LR * (1 / deltaTime  - fps);
         fps_p.innerText = fps.toFixed(2);
 
-        drawScene(gl, programInfo, buffers);
+        drawScene(gl, programInfo, buffers, texture);
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 }
 
 
-function drawScene(gl, programInfo, buffers) {
+function drawScene(gl, programInfo, buffers, texture) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
@@ -134,24 +143,24 @@ function drawScene(gl, programInfo, buffers) {
             programInfo.attribLocations.vertexPosition);
     }
 
-    {
-        const numComponents = 4;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
-        gl.vertexAttribPointer(
-            programInfo.attribLocations.vertexColor,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            programInfo.attribLocations.vertexColor);
-    }
-
+    // {
+    //     const numComponents = 4;
+    //     const type = gl.FLOAT;
+    //     const normalize = false;
+    //     const stride = 0;
+    //     const offset = 0;
+    //     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+    //     gl.vertexAttribPointer(
+    //         programInfo.attribLocations.vertexColor,
+    //         numComponents,
+    //         type,
+    //         normalize,
+    //         stride,
+    //         offset);
+    //     gl.enableVertexAttribArray(
+    //         programInfo.attribLocations.vertexColor);
+    // }
+    //
     {
         const numComponents = 3;
         const type = gl.FLOAT;
@@ -169,6 +178,25 @@ function drawScene(gl, programInfo, buffers) {
         gl.enableVertexAttribArray(
             programInfo.attribLocations.vertexNormal);
     }
+
+    {
+        const numComponents = 2;
+        const type = gl.FLOAT;
+        const normalize = false;
+        const stride = 0;
+        const offset = 0;
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.texture);
+        gl.vertexAttribPointer(
+            programInfo.attribLocations.textureCoord,
+            numComponents,
+            type,
+            normalize,
+            stride,
+            offset);
+        gl.enableVertexAttribArray(
+            programInfo.attribLocations.textureCoord);
+    }
+
 
     {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
@@ -192,6 +220,10 @@ function drawScene(gl, programInfo, buffers) {
         programInfo.uniformLocations.modelViewMatrix,
         false,
         modelViewMatrix);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
     {
         const vertexCount = buffers.numVertices;

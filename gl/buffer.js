@@ -1,6 +1,7 @@
-// const buildMesh = buildThorMesh;
 // const buildMesh = buildCubeMesh;
-const buildMesh = buildMultiMesh;
+// const buildMesh = buildSphereMesh;
+const buildMesh = multiMesh([buildSphereMesh, buildThorMesh]);
+
 
 function initBuffers(gl, kwargs) {
     const mesh = buildMesh(kwargs);
@@ -13,6 +14,10 @@ function initBuffers(gl, kwargs) {
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.normals), gl.STATIC_DRAW);
 
+    const textureBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.textures), gl.STATIC_DRAW);
+
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.colors), gl.STATIC_DRAW);
@@ -21,14 +26,13 @@ function initBuffers(gl, kwargs) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.elements), gl.STATIC_DRAW);
 
-    const numVertices = mesh.elements.length;
-
     return {
         position: positionBuffer,
-        color: colorBuffer,
         normal: normalBuffer,
+        texture: textureBuffer,
+        color: colorBuffer,
         indices: indexBuffer,
-        numVertices: numVertices,
+        numVertices: mesh.elements.length,
     };
 }
 
@@ -45,8 +49,11 @@ function buildThorMesh(kwargs) {
     var elements = [];
     for (var i_lon = 0; i_lon < num_lon; i_lon++) {
         for (var i_lat = 0; i_lat < num_lat; i_lat++) {
-            var u = 2 * Math.PI * i_lon / num_lon;
-            var v = 2 * Math.PI * i_lat / num_lat;
+            // var u = 2 * Math.PI * i_lon / num_lon;
+            // var v = 2 * Math.PI * i_lat / num_lat;
+            var u = 2 * Math.PI * i_lon / (num_lon - 1);
+            var v = 2 * Math.PI * i_lat / (num_lat - 1);
+
             var x = (r_big + r_small * Math.cos(v)) * Math.cos(u);
             var y = (r_big + r_small * Math.cos(v)) * Math.sin(u);
             var z = r_small * Math.sin(v);
@@ -58,8 +65,13 @@ function buildThorMesh(kwargs) {
             colors.push(1 + 0.5 * Math.cos(u), 0, 1 + 0.5 * Math.cos(v), 1);
             normals.push(nx, ny, nz);
 
-            var i_lon_2 = (i_lon + 1) % num_lon;
-            var i_lat_2 = (i_lat + 1) % num_lat;
+            // var i_lon_2 = (i_lon + 1) % num_lon;
+            // var i_lat_2 = (i_lat + 1) % num_lat;
+            var i_lon_2 = i_lon + 1;
+            var i_lat_2 = i_lat + 1;
+            if (i_lon_2 === num_lon || i_lat_2 === num_lat) {
+                continue;
+            }
             var i_1 = i_lon * num_lat + i_lat;
             var i_2 = i_lon * num_lat + i_lat_2;
             var i_3 = i_lon_2 * num_lat + i_lat;
@@ -90,22 +102,22 @@ function buildSphereMesh(kwargs) {
     var elements = [];
     for (var i_lon = 0; i_lon < num_lon; i_lon++) {
         for (var i_lat = 0; i_lat < num_lat; i_lat++) {
-            var u = 2 * Math.PI * i_lon / num_lon;
-            var v = - Math.PI + 2 * Math.PI * i_lat / num_lat;
+            var u = 2 * Math.PI * i_lon / (num_lon - 1);
+            var v = - Math.PI / 2 + Math.PI * i_lat / (num_lat - 1);
             var x = r * Math.cos(v) * Math.cos(u);
-            var y = r * Math.cos(v) * Math.sin(u);
-            var z = r * Math.sin(v);
+            var z = r * Math.cos(v) * Math.sin(u);
+            var y = r * Math.sin(v);
             var nx = Math.cos(v) * Math.cos(u);
             var ny = Math.cos(v) * Math.sin(u);
             var nz = Math.sin(v);
-            textures.push(u, v);
+            textures.push(i_lon / (num_lon - 1), i_lat / (num_lat - 1));
             positions.push(x, y, z);
             colors.push(0, 0.5 + 0.5 * Math.sin(v), 0.5 - 0.5 * Math.sin(v), 1);
             normals.push(nx, ny, nz);
 
-            var i_lon_2 = (i_lon + 1) % num_lon;
+            var i_lon_2 = i_lon + 1;
             var i_lat_2 = i_lat + 1;
-            if (i_lat_2 === num_lat) {
+            if (i_lon_2 === num_lon || i_lat_2 === num_lat) {
                 continue;
             }
             var i_1 = i_lon * num_lat + i_lat;
@@ -129,7 +141,7 @@ function buildSphereMesh(kwargs) {
 function buildCubeMesh(kwargs) {
     const cube_half_side = kwargs.cube_half_side;
 
-    const positions = [
+    var positions = [
         // Front face
         -1.0, -1.0,  1.0,
         1.0, -1.0,  1.0,
@@ -207,6 +219,39 @@ function buildCubeMesh(kwargs) {
         -1.0,  0.0,  0.0
     ];
 
+    const textures = [
+        // Front
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+        // Back
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+        // Top
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+        // Bottom
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+        // Right
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+        // Left
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0,
+    ];
+
     const up = 0.1;
     const faceColors = [
         [up,  0.0,  0.0,  1.0],    // Front face: white
@@ -231,8 +276,6 @@ function buildCubeMesh(kwargs) {
         20, 21, 22,     20, 22, 23,   // left
     ];
 
-    const textures = [];
-
     return {
         positions: positions,
         normals: normals,
@@ -242,26 +285,29 @@ function buildCubeMesh(kwargs) {
     }
 }
 
-function buildMultiMesh(kwargs) {
-    var result_mesh = {
-        positions: [],
-        normals: [],
-        textures: [],
-        colors: [],
-        elements: [],
-    };
+function multiMesh(meshBuilders) {
+    return function buildMultiMesh(kwargs) {
+        var result_mesh = {
+            positions: [],
+            normals: [],
+            textures: [],
+            colors: [],
+            elements: [],
+        };
 
-    const mesh_builders = [buildCubeMesh, buildThorMesh, buildSphereMesh];
-    for (var i = 0; i < mesh_builders.length; i++) {
-        const mesh = mesh_builders[i](kwargs);
-        const elements_offset = result_mesh.positions.length / 3;
-        result_mesh.positions = result_mesh.positions.concat(mesh.positions);
-        result_mesh.normals = result_mesh.normals.concat(mesh.normals);
-        result_mesh.textures = result_mesh.textures.concat(mesh.textures);
-        result_mesh.colors = result_mesh.colors.concat(mesh.colors);
-        result_mesh.elements = result_mesh.elements.concat(mesh.elements.map(function (id) {
-            return id + elements_offset;
-        }));
+        for (var i = 0; i < meshBuilders.length; i++) {
+            const mesh = meshBuilders[i](kwargs);
+            const elements_offset = result_mesh.positions.length / 3;
+
+            result_mesh.positions = result_mesh.positions.concat(mesh.positions);
+            result_mesh.normals = result_mesh.normals.concat(mesh.normals);
+            result_mesh.textures = result_mesh.textures.concat(mesh.textures);
+            result_mesh.colors = result_mesh.colors.concat(mesh.colors);
+            result_mesh.elements = result_mesh.elements.concat(mesh.elements.map(function (id) {
+                return id + elements_offset;
+            }));
+        }
+
+        return result_mesh;
     }
-    return result_mesh;
 }
