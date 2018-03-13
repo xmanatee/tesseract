@@ -1,32 +1,41 @@
 
-var x = 0.0;
-var y = 0.0;
-var z = -6.0;
+let x = 0.0;
+let y = 0.0;
+let z = -10.0;
 
 const MAX_TURN = 0.003;
 const MAX_LAT = 1;
-var view_lat = 0;
-var view_lon = 0;
+let view_lat = 0;
+let view_lon = 0;
 
 const MAX_VELOCITY = 5.0;
-var stright_velocity = 0;
-var side_velocity = 0;
-
-var cubeRotation = 0.0;
+let stright_velocity = 0;
+let side_velocity = 0;
 
 const FPS_LR = 0.1;
-var fps = 0;
-
-const texture_file = 'textures/Lava_001_COLOR.png';
-// const texture_file = 'textures/Lava_002_COLOR.png';
-// const texture_file = 'textures/Strawberry_milkshake_foam_001_NORM.jpg';
-// const texture_file = 'textures/Tiles_012_COLOR.jpg';
-// const texture_file = 'textures/Gold_Nugget_001_DISP.png';
+let fps = 0;
 
 function draw(gl) {
-    const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+    let shaderProgram = null;
+    shaderProgram = initShaderProgram(gl, vertexShader, colorFragmentShader);
+    const colorProgramInfo = {
+        program: shaderProgram,
+        attribLocations: {
+            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+            // textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
+            vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
+            vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
+        },
+        uniformLocations: {
+            projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+            normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
+            // uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
+        },
+    };
 
-    const programInfo = {
+    shaderProgram = initShaderProgram(gl, vertexShader, textureFragmentShader);
+    const textureProgramInfo = {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
@@ -43,30 +52,62 @@ function draw(gl) {
     };
 
     const kwargs = {
-        cube_half_side: 30,
+        cube_half_side: 0.3,
 
         thor_r_big: 2,
-        thor_num_lon: 200,
+        thor_num_lon: 100,
         thor_r_small: 1,
         thor_num_lat: 30,
 
-        sphere_r: 20,
+        sphere_r: 40,
         sphere_num_lon: 100,
         sphere_num_lat: 100,
     };
 
-    const buffers = initBuffers(gl, kwargs);
-    const texture = loadTexture(gl, texture_file);
+    const figuresInfo = [
+        {
+            programInfo: textureProgramInfo,
+            buffers: initBuffers(gl, buildThorMesh, kwargs),
+            rotation: {
+                angle: 0,
+                vec: [1, 0, 0],
+                speed: 1,
+            },
+            texture: loadTexture(gl, 'textures/Lava_001_COLOR.png'),
+        },
+        {
+            programInfo: textureProgramInfo,
+            buffers: initBuffers(gl, buildSphereMesh, kwargs),
+            rotation: {
+                angle: 0,
+                vec: [0, 1, 0],
+                speed: 0.05,
+            },
+            texture: loadTexture(gl, 'textures/Lava_001_COLOR.png'),
+        },
+        {
+            programInfo: textureProgramInfo,
+            buffers: initBuffers(gl, buildCubeMesh, kwargs),
+            rotation: {
+                angle: 0,
+                vec: [1, 1, 1],
+                speed: 10,
+            },
+            texture: loadTexture(gl, 'textures/Lava_002_COLOR.png'),
+        },
+    ];
 
-    drawScene(gl, programInfo, buffers, texture);
-
-    var then = 0;
+    let then = 0;
     function render(now) {
         now *= 0.001;
         const deltaTime = now - then;
         then = now;
 
-        cubeRotation += deltaTime;
+        figuresInfo.forEach((figureInfo) => {
+            if (figureInfo.rotation) {
+                figureInfo.rotation.angle += deltaTime * figureInfo.rotation.speed;
+            }
+        });
         checkKeys();
         z += (Math.cos(view_lon) * stright_velocity + Math.sin(view_lon) * side_velocity) * deltaTime;
         x += (-Math.sin(view_lon) * stright_velocity + Math.cos(view_lon) * side_velocity) * deltaTime;
@@ -76,20 +117,26 @@ function draw(gl) {
         fps = fps + FPS_LR * (1 / deltaTime  - fps);
         fps_p.innerText = fps.toFixed(2);
 
-        drawScene(gl, programInfo, buffers, texture);
+        drawScene(gl, figuresInfo);
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 }
 
-
-function drawScene(gl, programInfo, buffers, texture) {
+function drawScene(gl, figuresInfo) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
-
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    figuresInfo.forEach((figureInfo) => {
+        drawFigure(gl, figureInfo);
+    })
+
+}
+
+function drawFigure(gl, figureInfo) {
 
     // Create a perspective matrix, a special matrix that is
     // used to simulate the distortion of perspective in a camera.
@@ -98,13 +145,16 @@ function drawScene(gl, programInfo, buffers, texture) {
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
+    gl.useProgram(figureInfo.programInfo.program);
+
     const fieldOfView = 45 * Math.PI / 180;   // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
     const projectionMatrix = mat4.create();
 
-    mat4.perspective(projectionMatrix,
+    mat4.perspective(
+        projectionMatrix,
         fieldOfView,
         aspect,
         zNear,
@@ -112,18 +162,27 @@ function drawScene(gl, programInfo, buffers, texture) {
 
     const modelViewMatrix = mat4.create();
 
-    mat4.rotate(modelViewMatrix,
+    mat4.rotate(
+        modelViewMatrix,
         modelViewMatrix,
         view_lon,
         [0, 1, 0]);
-    mat4.rotate(modelViewMatrix,
+    mat4.rotate(
+        modelViewMatrix,
         modelViewMatrix,
         view_lat,
         [Math.cos(view_lon), 0, Math.sin(view_lon)]);
-
-    mat4.translate(modelViewMatrix,
+    mat4.translate(
+        modelViewMatrix,
         modelViewMatrix,
         [x, y, z]);
+    if (figureInfo.rotation) {
+        mat4.rotate(
+            modelViewMatrix,
+            modelViewMatrix,
+            figureInfo.rotation.angle,
+            figureInfo.rotation.vec);
+    }
 
     {
         const numComponents = 3;
@@ -131,136 +190,103 @@ function drawScene(gl, programInfo, buffers, texture) {
         const normalize = false;
         const stride = 0;
         const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.position);
         gl.vertexAttribPointer(
-            programInfo.attribLocations.vertexPosition,
+            figureInfo.programInfo.attribLocations.vertexPosition,
             numComponents,
             type,
             normalize,
             stride,
             offset);
         gl.enableVertexAttribArray(
-            programInfo.attribLocations.vertexPosition);
+            figureInfo.programInfo.attribLocations.vertexPosition);
     }
 
-    // {
-    //     const numComponents = 4;
-    //     const type = gl.FLOAT;
-    //     const normalize = false;
-    //     const stride = 0;
-    //     const offset = 0;
-    //     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
-    //     gl.vertexAttribPointer(
-    //         programInfo.attribLocations.vertexColor,
-    //         numComponents,
-    //         type,
-    //         normalize,
-    //         stride,
-    //         offset);
-    //     gl.enableVertexAttribArray(
-    //         programInfo.attribLocations.vertexColor);
-    // }
-    //
-    {
-        const numComponents = 3;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normal);
-        gl.vertexAttribPointer(
-            programInfo.attribLocations.vertexNormal,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            programInfo.attribLocations.vertexNormal);
-    }
-
-    {
+    if ("texture" in figureInfo) {
         const numComponents = 2;
         const type = gl.FLOAT;
         const normalize = false;
         const stride = 0;
         const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.texture);
+        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.texture);
         gl.vertexAttribPointer(
-            programInfo.attribLocations.textureCoord,
+            figureInfo.programInfo.attribLocations.textureCoord,
             numComponents,
             type,
             normalize,
             stride,
             offset);
         gl.enableVertexAttribArray(
-            programInfo.attribLocations.textureCoord);
+            figureInfo.programInfo.attribLocations.textureCoord);
+    } else {
+        // console.log("No text")
+        const numComponents = 4;
+        const type = gl.FLOAT;
+        const normalize = false;
+        const stride = 0;
+        const offset = 0;
+        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.color);
+        gl.vertexAttribPointer(
+            figureInfo.programInfo.attribLocations.vertexColor,
+            numComponents,
+            type,
+            normalize,
+            stride,
+            offset);
+        gl.enableVertexAttribArray(
+            figureInfo.programInfo.attribLocations.vertexColor);
+    }
+
+    {
+        const numComponents = 3;
+        const type = gl.FLOAT;
+        const normalize = false;
+        const stride = 0;
+        const offset = 0;
+        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.normal);
+        gl.vertexAttribPointer(
+            figureInfo.programInfo.attribLocations.vertexNormal,
+            numComponents,
+            type,
+            normalize,
+            stride,
+            offset);
+        gl.enableVertexAttribArray(
+            figureInfo.programInfo.attribLocations.vertexNormal);
     }
 
 
     {
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, figureInfo.buffers.indices);
     }
-
-    gl.useProgram(programInfo.program);
 
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);
     mat4.transpose(normalMatrix, normalMatrix);
 
     gl.uniformMatrix4fv(
-        programInfo.uniformLocations.normalMatrix,
+        figureInfo.programInfo.uniformLocations.normalMatrix,
         false,
         normalMatrix);
     gl.uniformMatrix4fv(
-        programInfo.uniformLocations.projectionMatrix,
+        figureInfo.programInfo.uniformLocations.projectionMatrix,
         false,
         projectionMatrix);
     gl.uniformMatrix4fv(
-        programInfo.uniformLocations.modelViewMatrix,
+        figureInfo.programInfo.uniformLocations.modelViewMatrix,
         false,
         modelViewMatrix);
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+    if ("texture" in figureInfo) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, figureInfo.texture);
+        gl.uniform1i(figureInfo.programInfo.uniformLocations.uSampler, 0);
+    }
 
     {
-        const vertexCount = buffers.numVertices;
+        const vertexCount = figureInfo.buffers.numVertices;
         const type = gl.UNSIGNED_SHORT;
         const offset = 0;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     }
-}
-
-function initShaderProgram(gl, vsSource, fsSource) {
-    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
-
-    const shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
-
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-        alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
-        return null;
-    }
-
-    return shaderProgram;
-}
-
-function loadShader(gl, type, source) {
-    const shader = gl.createShader(type);
-
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-    }
-
-    return shader;
 }

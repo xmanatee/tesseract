@@ -1,4 +1,4 @@
-var key_triggers = {};
+let key_triggers = {};
 key_triggers['w'] = function () {
     stright_velocity = MAX_VELOCITY;
 };
@@ -14,20 +14,20 @@ key_triggers['d'] = function () {
 
 // function glKeyPressedListener(event){
 //     event = event || window.event;
-//     var key = event.keyCode || event.which || event.key;
+//     let key = event.keyCode || event.which || event.key;
 //     key_triggers[key]();
 // }
 
-var keys = new Set();
+let keys = new Set();
 function glKeyDownListener(event) {
     event = event || window.event;
-    var key = event.key || event.which || event.key;
+    let key = event.key || event.which || event.key;
     keys.add(key);
 }
 
 function glKeyUpListener(event) {
     event = event || window.event;
-    var key = event.key || event.which || event.key;
+    let key = event.key || event.which || event.key;
     keys.delete(key);
 }
 

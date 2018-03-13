@@ -25,4 +25,5 @@ body, #glcanvas {
 
 #glcanvas {
     cursor: none;
+    /*border: red;*/
 }

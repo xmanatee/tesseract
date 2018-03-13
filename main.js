@@ -1,27 +1,25 @@
-function initCanvas(canvas) {
+function fixSize(canvas, gl) {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    function requestFullscreen(){
-        if(canvas.webkitRequestFullScreen) {
-            canvas.webkitRequestFullScreen();
-        }
-        else {
-            canvas.mozRequestFullScreen();
-        }
-        // canvas.removeEventListener("click", requestFullscreen);
-    }
+    gl.viewport(0, 0, canvas.width, canvas.height);
 
-    canvas.addEventListener("dblclick", requestFullscreen)
 }
 
-var fps_p = null;
+function requestFullscreen(canvas) {
+    if(canvas.webkitRequestFullScreen) {
+        canvas.webkitRequestFullScreen();
+    }
+    else {
+        canvas.mozRequestFullScreen();
+    }
+}
+
+let fps_p = null;
 
 window.onload = function() {
     const canvas = document.getElementById("glcanvas");
     fps_p = document.getElementById("fps_p");
-
-    initCanvas(canvas);
 
     const gl = canvas.getContext("webgl2");
 
@@ -31,7 +29,17 @@ window.onload = function() {
         return;
     }
 
-    // console.log("Lalaka");
+    fixSize(canvas, gl);
+    window.onresize = () => {
+        fixSize(canvas, gl);
+    };
+    // canvas.addEventListener("dblclick", requestFullscreen);
+
+    canvas.ondblclick = () => {
+        requestFullscreen(canvas)
+    };
+
+
     draw(gl);
 
     setupKeyListeners(window);

@@ -1,8 +1,14 @@
 # Tesseract Game in WebGL
 
+TOFIX:
+
+* pack all attributes to one buffer and use strides
+* pack attributes of all objects to one buffer
+* switch shaders in a smart way
+* no reset for vao (might not be possible for webGL)
+
 TODO:
 
-* Textures
 * Custom 3d objects from file
 * Multiple independent objects
 * Object movements
@@ -10,6 +16,7 @@ TODO:
 * Movement on the surface
 * Shooting
 * WebRtc p2p game
+* Loading sign
 
 Check it out on [gh-pages](https://xmanatee.github.io/tesseract)
 
