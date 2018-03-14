@@ -1,7 +1,6 @@
-
 let x = 0.0;
 let y = 0.0;
-let z = -10.0;
+let z = -7.0;
 
 const MAX_TURN = 0.003;
 const MAX_LAT = 1;
@@ -15,87 +14,285 @@ let side_velocity = 0;
 const FPS_LR = 0.1;
 let fps = 0;
 
-function draw(gl) {
-    let shaderProgram = null;
-    shaderProgram = initShaderProgram(gl, vertexShader, colorFragmentShader);
-    const colorProgramInfo = {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-            // textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
-            vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
-            vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-            normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
-            // uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
-        },
-    };
+// const player = require("player.js");
 
-    shaderProgram = initShaderProgram(gl, vertexShader, textureFragmentShader);
-    const textureProgramInfo = {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-            textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
-            vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
-            // vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-            normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
-            uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
-        },
-    };
+function startScene(gl) {
 
-    const kwargs = {
-        cube_half_side: 0.3,
+    // const player = new Player(-10, 0, 0, 0, key_triggers);
 
-        thor_r_big: 2,
-        thor_num_lon: 100,
-        thor_r_small: 1,
-        thor_num_lat: 30,
-
-        sphere_r: 40,
-        sphere_num_lon: 100,
-        sphere_num_lat: 100,
-    };
+    initPrograms(gl);
 
     const figuresInfo = [
         {
-            programInfo: textureProgramInfo,
-            buffers: initBuffers(gl, buildThorMesh, kwargs),
+            programInfo: programs.textured,
+            buffers: initBuffers(gl, buildThorMesh, {
+                thor_r_big: 2.7,
+                thor_num_lon: 100,
+                thor_r_small: 1,
+                thor_num_lat: 30,}),
+            on: true,
             rotation: {
                 angle: 0,
                 vec: [1, 0, 0],
                 speed: 1,
             },
+            bufferAttributes: [
+                {
+                    numComponents: 4,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexColor",
+                    bufferName: "color",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexPosition",
+                    bufferName: "position",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexNormal",
+                    bufferName: "normal",
+                },
+                {
+                    numComponents: 2,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "textureCoord",
+                    bufferName: "texture",
+                },
+            ],
             texture: loadTexture(gl, 'textures/Lava_001_COLOR.png'),
         },
         {
-            programInfo: textureProgramInfo,
-            buffers: initBuffers(gl, buildSphereMesh, kwargs),
+            programInfo: programs.textured,
+            buffers: initBuffers(gl, buildSphereMesh, {
+                sphere_r: 40,
+                sphere_num_lon: 100,
+                sphere_num_lat: 100,
+            }),
+            on: true,
             rotation: {
                 angle: 0,
                 vec: [0, 1, 0],
                 speed: 0.05,
             },
-            texture: loadTexture(gl, 'textures/Lava_001_COLOR.png'),
+            bufferAttributes: [
+                {
+                    numComponents: 4,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexColor",
+                    bufferName: "color",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexPosition",
+                    bufferName: "position",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexNormal",
+                    bufferName: "normal",
+                },
+                {
+                    numComponents: 2,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "textureCoord",
+                    bufferName: "texture",
+                },
+            ],
+            texture: loadTexture(gl, 'textures/Tiles_012_ROUGH.jpg'),
         },
         {
-            programInfo: textureProgramInfo,
-            buffers: initBuffers(gl, buildCubeMesh, kwargs),
+            programInfo: programs.textured,
+            buffers: initBuffers(gl, () => {return scale_obj_positions(parse_obj(obj_meshes.cerberus));}),
+            on: true,
             rotation: {
                 angle: 0,
-                vec: [1, 1, 1],
-                speed: 10,
+                vec: [0, 1, 0],
+                speed: -1,
             },
-            texture: loadTexture(gl, 'textures/Lava_002_COLOR.png'),
+            translation: {
+                vec: [0, 1, 0],
+            },
+            bufferAttributes: [
+                {
+                    numComponents: 4,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexColor",
+                    bufferName: "color",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexPosition",
+                    bufferName: "position",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexNormal",
+                    bufferName: "normal",
+                },
+                {
+                    numComponents: 2,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "textureCoord",
+                    bufferName: "texture",
+                },
+            ],
+            texture: loadTexture(gl, 'textures/grid_color.jpg'),
+        },
+        {
+            programInfo: programs.textured,
+            // Object.values(obj_meshes)[0]
+            buffers: initBuffers(gl, () => {return scale_obj_positions(parse_obj(obj_meshes.naruto));}),
+            on: false,
+            rotation: {
+                angle: 0,
+                vec: [0, 1, 0],
+                speed: 0.5,
+            },
+            start_rotation: {
+                angle: -0.5 * Math.PI,
+                vec: [1, 0, 0],
+            },
+            bufferAttributes: [
+                {
+                    numComponents: 4,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexColor",
+                    bufferName: "color",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexPosition",
+                    bufferName: "position",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexNormal",
+                    bufferName: "normal",
+                },
+                {
+                    numComponents: 2,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "textureCoord",
+                    bufferName: "texture",
+                },
+            ],
+            texture: loadTexture(gl, 'textures/naruto_1.png'),
+        },
+        {
+            programInfo: programs.textured,
+            buffers: initBuffers(gl, () => {return scale_obj_positions(parse_obj(obj_meshes.flash));}),
+            on: true,
+            rotation: {
+                angle: 0,
+                vec: [0, 1, 0],
+                speed: 0.5,
+            },
+            bufferAttributes: [
+                {
+                    numComponents: 4,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexColor",
+                    bufferName: "color",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexPosition",
+                    bufferName: "position",
+                },
+                {
+                    numComponents: 3,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "vertexNormal",
+                    bufferName: "normal",
+                },
+                {
+                    numComponents: 2,
+                    type: gl.FLOAT,
+                    normalize: false,
+                    stride: 0,
+                    offset: 0,
+                    vertexAttributeName: "textureCoord",
+                    bufferName: "texture",
+                },
+            ],
+            texture: loadTexture(gl, 'textures/FL_CW_A_1.png'),
         },
     ];
+
+    const switchMeshes = (event) => {
+        if (event.key === "q") {
+            figuresInfo[3].on = !figuresInfo[3].on;
+            figuresInfo[4].on = !figuresInfo[4].on;
+        }
+    };
+    window.addEventListener("keydown", switchMeshes, false);
 
     let then = 0;
     function render(now) {
@@ -130,7 +327,7 @@ function drawScene(gl, figuresInfo) {
     gl.depthFunc(gl.LEQUAL);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    figuresInfo.forEach((figureInfo) => {
+    figuresInfo.filter(figureInfo => figureInfo.on).forEach((figureInfo) => {
         drawFigure(gl, figureInfo);
     })
 
@@ -138,16 +335,9 @@ function drawScene(gl, figuresInfo) {
 
 function drawFigure(gl, figureInfo) {
 
-    // Create a perspective matrix, a special matrix that is
-    // used to simulate the distortion of perspective in a camera.
-    // Our field of view is 45 degrees, with a width/height
-    // ratio that matches the display size of the canvas
-    // and we only want to see objects between 0.1 units
-    // and 100 units away from the camera.
-
     gl.useProgram(figureInfo.programInfo.program);
 
-    const fieldOfView = 45 * Math.PI / 180;   // in radians
+    const fieldOfView = 45 * Math.PI / 180;
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
@@ -183,78 +373,31 @@ function drawFigure(gl, figureInfo) {
             figureInfo.rotation.angle,
             figureInfo.rotation.vec);
     }
-
-    {
-        const numComponents = 3;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.position);
-        gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.vertexPosition,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.vertexPosition);
+    if (figureInfo.start_rotation) {
+        mat4.rotate(
+            modelViewMatrix,
+            modelViewMatrix,
+            figureInfo.start_rotation.angle,
+            figureInfo.start_rotation.vec);
     }
-
-    if ("texture" in figureInfo) {
-        const numComponents = 2;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.texture);
-        gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.textureCoord,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.textureCoord);
-    } else {
-        // console.log("No text")
-        const numComponents = 4;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.color);
-        gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.vertexColor,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.vertexColor);
+    if (figureInfo.translation) {
+        mat4.translate(
+            modelViewMatrix,
+            modelViewMatrix,
+            figureInfo.translation.vec);
     }
-
-    {
-        const numComponents = 3;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.normal);
+    figureInfo.bufferAttributes.forEach((attr) => {
+        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers[attr.bufferName]);
         gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.vertexNormal,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
+            figureInfo.programInfo.attribLocations[attr.vertexAttributeName],
+            attr.numComponents,
+            attr.type,
+            attr.normalize,
+            attr.stride,
+            attr.offset);
         gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.vertexNormal);
-    }
-
+            figureInfo.programInfo.attribLocations[attr.vertexAttributeName]);
+    });
 
     {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, figureInfo.buffers.indices);
