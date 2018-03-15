@@ -4,23 +4,15 @@ if (typeof String.prototype.startsWith !== "function") {
     };
 }
 
-function parse_obj(objectData){
+function mesh_from_obj(objectData, scale_pos=true, scale_tex=false) {
     let positions = [];
     let normals = [];
     let textures = [];
     let faces = [];
-    let vertexCount = 0;
-    let faceCounter = -1;
 
-    let packed = {};
-    packed.positions = [];
-    packed.normals = [];
-    packed.textures = [];
-    packed.indices = [];
-
-    function unsign(id, numVertices) {
+    function abs_id(id, numVertices) {
         if (id < 0) {
-            return numVertices + parseInt(id);
+            return numVertices + id;
         } else {
             return parseInt(id) - 1;
         }
@@ -29,37 +21,45 @@ function parse_obj(objectData){
     let lines = objectData.split("\n");
     for (let i = 0; i < lines.length; i++) {
         if (lines[i].startsWith("v ")) {
-            const line = lines[i].slice(2).split(" ").filter(word => word);
-            positions.push(line[0]);
-            positions.push(line[1]);
-            positions.push(line[2]);
-            ++vertexCount;
+            const line_floats = lines[i].slice(2).split(" ").filter(word => word).map(str => parseFloat(str));
+            positions.push(line_floats[0]);
+            positions.push(line_floats[1]);
+            positions.push(line_floats[2]);
         }
         else if (lines[i].startsWith("vn")) {
-            const line = lines[i].slice(3).split(" ").filter(word => word);
-            normals.push(line[0]);
-            normals.push(line[1]);
-            normals.push(line[2]);
+            const line_floats = lines[i].slice(3).split(" ").filter(word => word).map(str => parseFloat(str));
+            normals.push(line_floats[0]);
+            normals.push(line_floats[1]);
+            normals.push(line_floats[2]);
         }
         else if (lines[i].startsWith("vt")) {
-            const line = lines[i].slice(3).split(" ").filter(word => word);
-            textures.push(line[0]);
-            textures.push(line[1]);
+            const line_floats = lines[i].slice(3).split(" ").filter(word => word).map(str => parseFloat(str));
+            textures.push(line_floats[0]);
+            textures.push(line_floats[1]);
         }
         else if (lines[i].startsWith("f ")) {
-            faceCounter += 1;
-            faces.push([]);
+            let face = [];
             const line = lines[i].slice(2).split(" ").filter(word => word);
             for (let j = 0; j < line.length; j++) {
-                const face = line[j].split("/");
-                let a = unsign(face[0], vertexCount);
-                let b = unsign(face[1], vertexCount);
-                let c = unsign(face[2], vertexCount);
-                faces[faceCounter].push([a, b, c]);
+                const face_vertex_ids = line[j].split("/").map(str => parseInt(str));
+                let a = abs_id(face_vertex_ids[0], positions.length);
+                let b = abs_id(face_vertex_ids[1], textures.length);
+                let c = abs_id(face_vertex_ids[2], normals.length);
+                face.push([a, b, c]);
             }
+            faces.push(face);
+        }
+        else if (lines[i].startsWith("usemtl ")) {
+            // TODO: use different textures
         }
     }
 
+    const packed = {
+        positions: [],
+        normals: [],
+        textures: [],
+        indices: [],
+    };
     let hashed_vertices = {};
     let index = 0;
     for (let i = 0; i < faces.length; ++i) {
@@ -94,8 +94,15 @@ function parse_obj(objectData){
             packed.indices.push(face_indices[0], face_indices[j - 1], face_indices[j]);
         }
     }
-    delete packed.hashindices;
-    delete packed.index;
+
+    if (scale_pos) {
+        scale_obj_positions(packed);
+    }
+
+    if (scale_tex) {
+        scale_obj_texture(packed);
+    }
+
     return packed;
 }
 
@@ -105,7 +112,7 @@ function scale_obj_positions(packed) {
         let min = 1e6, max = -1e6, sum = 0.0, n = 0;
         for (let i = offset; i < packed.positions.length; i += 3) {
             if (typeof packed.positions[i] === 'undefined') { continue; }
-            let v = parseFloat(packed.positions[i]);
+            let v = packed.positions[i];
             min = Math.min(min, v);
             max = Math.max(max, v);
             sum = sum + v;
@@ -126,26 +133,21 @@ function scale_obj_positions(packed) {
     return packed;
 }
 
-// scale_obj_positions = (packed) => {
-//     console.log(packed);
-//     return packed;
-// };
-
-// scale_obj_positions = (packed) => {
-//     for (let offset = 0; offset < 2; ++offset) {
-//         let min = 1e6, max = -1e6, sum = 0.0, n = 0;
-//         for (let i = offset; i < packed.textures.length; i += 2) {
-//             if (typeof packed.textures[i] === 'undefined') { continue; }
-//             let v = parseFloat(packed.textures[i]);
-//             min = Math.min(min, v);
-//             max = Math.max(max, v);
-//             sum = sum + v;
-//             ++n;
-//         }
-//         for (let i = offset; i < packed.textures.length; i += 2) {
-//             packed.textures[i] = (packed.textures[i] - min) / scale;
-//         }
-//     }
-//     console.log(packed);
-//     return packed;
-// };
+function scale_obj_texture(packed) {
+    for (let offset = 0; offset < 2; ++offset) {
+        let min = 1e6, max = -1e6, sum = 0.0, n = 0;
+        for (let i = offset; i < packed.textures.length; i += 2) {
+            if (typeof packed.textures[i] === 'undefined') { continue; }
+            let v = parseFloat(packed.textures[i]);
+            min = Math.min(min, v);
+            max = Math.max(max, v);
+            sum = sum + v;
+            ++n;
+        }
+        for (let i = offset; i < packed.textures.length; i += 2) {
+            packed.textures[i] = (packed.textures[i] - min) / scale;
+        }
+    }
+    console.log(packed);
+    return packed;
+}

@@ -1,12 +1,12 @@
 
 const programs = {};
 
-function initPrograms(gl) {
+function init_programs(gl) {
 
     // let shaderProgram = null;
 
     let shaderProgram = initShaderProgram(gl, vertexShader, colorFragmentShader);
-    const colorProgramInfo = {
+    programs.colored = {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
@@ -16,14 +16,15 @@ function initPrograms(gl) {
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+            viewMatrix: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
+            modelMatrix: gl.getUniformLocation(shaderProgram, 'uModelMatrix'),
             normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
             // uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
         },
     };
 
     shaderProgram = initShaderProgram(gl, vertexShader, textureFragmentShader);
-    const textureProgramInfo = {
+    programs.textured = {
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
@@ -33,12 +34,10 @@ function initPrograms(gl) {
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+            viewMatrix: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
+            modelMatrix: gl.getUniformLocation(shaderProgram, 'uModelMatrix'),
             normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
             uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
         },
     };
-
-    programs.colored = colorProgramInfo;
-    programs.textured = textureProgramInfo;
 }

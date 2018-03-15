@@ -19,7 +19,7 @@ let fps_p = null;
 
 window.onload = function() {
 
-    // let mesh = parse_obj(stickman_obj_src);
+    // let mesh = mesh_from_obj(stickman_obj_src);
     // console.log(mesh);
     // let scaled_mesh = scale_obj_positions(mesh);
     // console.log(mesh);
@@ -46,7 +46,7 @@ window.onload = function() {
     canvas.ondblclick = () => {requestFullscreen(canvas);};
 
     load_meshes(obj_paths, () => {
-        // console.log(scale_obj_positions(parse_obj(obj_meshes.flash)));
+        // console.log(scale_obj_positions(mesh_from_obj(obj_meshes.flash)));
         startScene(gl);
     });
 

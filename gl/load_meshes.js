@@ -1,16 +1,14 @@
 const obj_meshes = {};
 
 function load_meshes(obj_paths, callback) {
-    // let count = 0;
     for (let i = 0; i < obj_paths.length; ++i) {
         const path = obj_paths[i];
         const start = path.lastIndexOf("/");
-        const stop= path.lastIndexOf(".");
+        const stop = path.lastIndexOf(".");
         const name = path.substring(start + 1, stop);
 
         load_file(obj_paths[i], (src) => {
             obj_meshes[name] = src;
-            // ++count;
             if (Object.keys(obj_meshes).length === obj_paths.length) {
                 callback();
             }
@@ -27,7 +25,7 @@ const obj_paths = [
     // "objs/colt.obj",
     // "objs/darth_vader.obj", //too big
     // "objs/death_star.obj", // too big
-    // "objs/die.obj",
+    "objs/die.obj",
     // "objs/dog.obj",
     // "objs/female.obj",
     "objs/flash.obj",

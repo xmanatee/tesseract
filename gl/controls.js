@@ -53,5 +53,5 @@ function setupKeyListeners(window) {
     // window.addEventListener("keypress", glKeyPressedListener, false);
     window.addEventListener("keydown", glKeyDownListener, false);
     window.addEventListener("keyup", glKeyUpListener, false);
-    window.addEventListener("mousemove", glMouseMoveListener, false)
+    // window.addEventListener("mousemove", glMouseMoveListener, false)
 }

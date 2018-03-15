@@ -6,7 +6,8 @@ const vertexShader = `
     attribute vec2 aTextureCoord;
     
     uniform mat4 uNormalMatrix;
-    uniform mat4 uModelViewMatrix;
+    uniform mat4 uViewMatrix;
+    uniform mat4 uModelMatrix;
     uniform mat4 uProjectionMatrix;
     
     varying lowp vec4 vColor;
@@ -14,7 +15,7 @@ const vertexShader = `
     varying highp vec2 vTextureCoord;
     
     void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * aVertexPosition;
         vColor = aVertexColor;
         
         highp vec3 ambientLight = vec3(0.3, 0.3, 0.0);
