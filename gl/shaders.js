@@ -18,15 +18,21 @@ const vertexShader = `
         gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * aVertexPosition;
         vColor = aVertexColor;
         
-        highp vec3 ambientLight = vec3(0.3, 0.3, 0.0);
-        // highp vec3 directionalLightColor = vec3(0.9, 0.3, 0.4);
-        highp vec3 directionalLightColor = vec3(1, 1, 1);
-        highp vec3 directionalVector = normalize(vec3(1, 0.5, 0.75));
+        highp vec3 ambientLight = vec3(0.1, 0.1, 0.1);
+
 
         highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
 
-        highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-        vLighting = ambientLight + (directionalLightColor * directional);
+        highp vec3 directionalLightColor_1 = vec3(1.5, 0.5, 0.0);
+        highp vec3 directionalVector_1 = normalize(vec3(1, 0.5, 0.75));
+        highp float directional_1 = max(dot(transformedNormal.xyz, directionalVector_1), 0.0);
+
+        highp vec3 directionalLightColor_2 = vec3(0, 2, 2.4);
+        highp vec3 directionalVector_2 = normalize(vec3(-1, -0.5, 0));
+        highp float directional_2 = max(dot(transformedNormal.xyz, directionalVector_2), 0.0);
+
+
+        vLighting = ambientLight + (directionalLightColor_1 * directional_1) + (directionalLightColor_2 * directional_2);;
         vTextureCoord = aTextureCoord;
     }
 `;

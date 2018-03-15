@@ -67,8 +67,6 @@ function drawFigure(gl, figure) {
     const zNear = 0.1;
     const zFar = 100.0;
 
-    const modelMatrix = mat4.create();
-
     const projectionMatrix = mat4.create();
     mat4.perspective(
         projectionMatrix,
@@ -103,26 +101,7 @@ function drawFigure(gl, figure) {
 
     const viewMatrix = player_view();
 
-    if (figure.rotation) {
-        mat4.rotate(
-            modelMatrix,
-            modelMatrix,
-            figure.rotation.angle,
-            figure.rotation.vec);
-    }
-    if (figure.start_rotation) {
-        mat4.rotate(
-            modelMatrix,
-            modelMatrix,
-            figure.start_rotation.angle,
-            figure.start_rotation.vec);
-    }
-    if (figure.start_translation) {
-        mat4.translate(
-            modelMatrix,
-            modelMatrix,
-            figure.start_translation.vec);
-    }
+    const modelMatrix = figure_view(figure);
 
     figure.buffers.attributes.forEach((attr) => {
         gl.bindBuffer(gl.ARRAY_BUFFER, figure.buffers[attr.bufferName]);

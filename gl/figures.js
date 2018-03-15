@@ -1,12 +1,12 @@
 const figuresConfig = [
     {
+        id: "thor",
         program_id: "textured",
         surface: {
             type: "thor",
-            params: [20, 4],
+            params: [8, 5],
             // type: "sphere",
-            // params: [20],
-            // params: [2.7, 1],
+            // params: [8],
             det: [100, 100],
         },
         on: true,
@@ -18,6 +18,7 @@ const figuresConfig = [
         texture_url: "textures/Lava_001_COLOR.png",
     },
     {
+        id: "sphere",
         program_id: "textured",
         surface: {
             type: "sphere",
@@ -33,23 +34,32 @@ const figuresConfig = [
         texture_url: "textures/Tiles_012_ROUGH.jpg",
     },
     {
+        id: "cerberus",
         program_id: "textured",
-        obj_name: "cerberus",
-        on: true,
-        rotation: {
-            angle: 0,
-            vec: [0, 1, 0],
-            speed: -1,
+        obj: {
+            name: "cerberus",
+            scale: 0.1,
         },
+        on: true,
+        relative: true,
+        // rotation: {
+        //     angle: 0,
+        //     vec: [0, 1, 0],
+        //     speed: -1,
+        // },
         start_translation: {
-            vec: [0, 1, 0],
+            vec: [0.05, 0, -0.2],
         },
         texture_url: "textures/grid_color.jpg",
     },
     {
+        id: "naruto",
         program_id: "textured",
-        obj_name: "naruto",
-        on: false,
+        obj: {
+            name: "naruto",
+            scale: 1,
+        },
+        on: true,
         rotation: {
             angle: 0,
             vec: [0, 1, 0],
@@ -62,14 +72,26 @@ const figuresConfig = [
         texture_url: "textures/naruto_1.png",
     },
     {
+        id: "flash",
         program_id: "textured",
-        obj_name: "flash",
-        on: false,
+        obj: {
+            name: "flash",
+            // scale: 1,
+        },
         rotation: {
             angle: 0,
             vec: [0, 1, 0],
             speed: 0.5,
         },
+        on: false,
+        // relative: true,
+        // start_rotation: {
+        //     angle: -3,
+        //     vec: [0, 1, 0],
+        // },
+        // start_translation: {
+        //     vec: [0, -0.15, -0.5],
+        // },
         texture_url: "textures/FL_CW_A_1.png",
     },
 ];
@@ -80,16 +102,18 @@ function build_figures(gl, figs_config) {
     for (let i = 0; i < figs_config.length; ++i) {
         const fig_config = figs_config[i];
         const figure = {
+            id: fig_config.id,
             programInfo: programs[fig_config.program_id],
             on: fig_config.on,
+            relative: fig_config.relative,
             rotation: fig_config.rotation,
             start_rotation: fig_config.start_rotation,
             start_translation: fig_config.start_translation,
             texture: loadTexture(gl, fig_config.texture_url),
         };
         let mesh = null;
-        if (fig_config.obj_name) {
-            mesh = mesh_from_obj(obj_meshes[fig_config.obj_name])
+        if (fig_config.obj) {
+            mesh = mesh_from_obj(obj_meshes[fig_config.obj.name], fig_config.obj.scale)
         }
         else if (fig_config.surface) {
             let surface_type = null;
@@ -108,4 +132,37 @@ function build_figures(gl, figs_config) {
         figures.push(figure);
     }
     return figures;
+}
+
+function figure_view(figure) {
+    let modelMatrix = null;
+    if (figure.relative) {
+        modelMatrix = player_view();
+        mat4.invert(modelMatrix, modelMatrix);
+    } else {
+        modelMatrix = mat4.create();
+    }
+
+    if (figure.rotation) {
+        mat4.rotate(
+            modelMatrix,
+            modelMatrix,
+            figure.rotation.angle,
+            figure.rotation.vec);
+    }
+    if (figure.start_translation) {
+        mat4.translate(
+            modelMatrix,
+            modelMatrix,
+            figure.start_translation.vec);
+    }
+    if (figure.start_rotation) {
+        mat4.rotate(
+            modelMatrix,
+            modelMatrix,
+            figure.start_rotation.angle,
+            figure.start_rotation.vec);
+    }
+
+    return modelMatrix;
 }

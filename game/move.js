@@ -1,3 +1,5 @@
+let game_surface = null;
+
 let u = -7.0;
 let v = 0;
 
@@ -9,6 +11,12 @@ let view_lon = 0;
 const MAX_VELOCITY = 5.0;
 let stright_velocity = 0;
 let side_velocity = 0;
+
+
+function init_game_surface() {
+    game_surface = new Thor(20, 4);
+
+}
 
 function move(deltaTime) {
     u += (Math.cos(view_lon) * stright_velocity + Math.sin(view_lon) * side_velocity) * deltaTime;

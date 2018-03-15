@@ -4,7 +4,7 @@ if (typeof String.prototype.startsWith !== "function") {
     };
 }
 
-function mesh_from_obj(objectData, scale_pos=true, scale_tex=false) {
+function mesh_from_obj(objectData, scale_pos=1, scale_tex=null) {
     let positions = [];
     let normals = [];
     let textures = [];
@@ -96,7 +96,7 @@ function mesh_from_obj(objectData, scale_pos=true, scale_tex=false) {
     }
 
     if (scale_pos) {
-        scale_obj_positions(packed);
+        scale_obj_positions(packed, scale_pos);
     }
 
     if (scale_tex) {
@@ -106,7 +106,7 @@ function mesh_from_obj(objectData, scale_pos=true, scale_tex=false) {
     return packed;
 }
 
-function scale_obj_positions(packed) {
+function scale_obj_positions(packed, scale_pos) {
     let scales = [];
     for (let offset = 0; offset < 3; ++offset) {
         let min = 1e6, max = -1e6, sum = 0.0, n = 0;
@@ -125,7 +125,7 @@ function scale_obj_positions(packed) {
             packed.positions[i] = (packed.positions[i] - avg);
         }
     }
-    const scale = Math.max(...scales);
+    const scale = Math.max(...scales) / scale_pos;
     for (let i = 0; i < packed.positions.length; ++i) {
         packed.positions[i] = packed.positions[i] / scale;
     }
@@ -148,6 +148,5 @@ function scale_obj_texture(packed) {
             packed.textures[i] = (packed.textures[i] - min) / scale;
         }
     }
-    console.log(packed);
     return packed;
 }

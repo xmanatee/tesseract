@@ -1,13 +1,13 @@
 let game_surface = null;
 
-let u = 0;
-let v = Math.PI / 2;
+let u = Math.PI / 2;
+let v = Math.PI / 2 + 1;
 
-let view_height = -0.3;
+let view_height = -0.5;
 
-const MAX_TURN = 0.005;
+const MAX_TURN = 0.004;
 const MAX_LAT = 1;
-let view_lat = 0;
+let view_lat = -0.20;
 let view_lon = Math.PI / 2;
 
 const MAX_VELOCITY = 5.0;
@@ -19,8 +19,9 @@ let h = 1; // HACK
 
 function init_game_surface() {
     const inner = false;
-    game_surface = new Thor(20, 4, inner);
-    // game_surface = new Sphere(20, inner);
+    // const inner = true;
+    game_surface = new Thor(8, 5, inner);
+    // game_surface = new Sphere(8, inner);
     h = 1;
     if (!inner) {
         h = -1;
@@ -87,8 +88,6 @@ function player_view() {
         viewMatrix,
         view_lon,
         up);
-    // right = vec({x: viewMatrix[0], y: viewMatrix[1], z: viewMatrix[2],});
-
     const h_vec = up;
     vec3.scaleAndAdd(h_vec, player_xyz(), up, view_height);
     mat4.translate(
