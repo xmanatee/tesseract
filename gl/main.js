@@ -2,11 +2,9 @@
 const FPS_LR = 0.1;
 let fps = 0;
 
-// Math.PI.;
 function startScene(gl) {
 
     init_game_surface();
-
 
     // const player = new Player(-10, 0, 0, 0, key_triggers);
 
@@ -74,30 +72,6 @@ function drawFigure(gl, figure) {
         aspect,
         zNear,
         zFar);
-
-    // const u = x / 10;
-    // const v = z / 10;
-    // const viewMatrix = mat4.fromValues(
-    //     ...vec(game_surface.dv(u, v)), 0,
-    //     ...vec(game_surface.nxyz(u, v)), 0,
-    //     ...vec(game_surface.du(u, v)), 0,
-    //     0, 0, 0, 1);
-
-    // const viewMatrix = mat4.create();
-    // mat4.rotate(
-    //     viewMatrix,
-    //     viewMatrix,
-    //     view_lon,
-    //     [0, 1, 0]);
-    // mat4.rotate(
-    //     viewMatrix,
-    //     viewMatrix,
-    //     view_lat,
-    //     [Math.cos(view_lon), 0, Math.sin(view_lon)]);
-    // mat4.translate(
-    //     viewMatrix,
-    //     viewMatrix,
-    //     player_xyz());
 
     const viewMatrix = player_view();
 
