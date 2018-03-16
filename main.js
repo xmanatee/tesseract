@@ -4,12 +4,14 @@ function fixSize(canvas, gl) {
     gl.viewport(0, 0, canvas.width, canvas.height);
 }
 
+
+
 function requestFullscreen(canvas) {
-    if(canvas.webkitRequestFullScreen) {
-        canvas.webkitRequestFullScreen();
-    } else {
-        canvas.mozRequestFullScreen();
-    }
+    canvas.requestFullScreen = canvas.requestFullScreen || canvas.webkitRequestFullScreen || canvas.mozRequestFullScreen;
+    canvas.requestFullScreen();
+
+    canvas.requestPointerLock = canvas.requestPointerLock || canvas.webkitRequestPointerLock || canvas.mozRequestPointerLock;
+    canvas.requestPointerLock();
 }
 
 let fps_p = null;
