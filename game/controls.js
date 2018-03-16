@@ -1,16 +1,4 @@
 let key_triggers = {};
-key_triggers['w'] = function () {
-    stright_velocity = MAX_VELOCITY;
-};
-key_triggers['s'] = function () {
-    stright_velocity = -MAX_VELOCITY;
-};
-key_triggers['a'] = function () {
-    side_velocity = MAX_VELOCITY;
-};
-key_triggers['d'] = function () {
-    side_velocity = -MAX_VELOCITY;
-};
 
 // function glKeyPressedListener(event){
 //     event = event || window.event;
@@ -39,15 +27,15 @@ function checkKeys() {
     })
 }
 
-function glMouseMoveListener(event) {
-    view_lat += MAX_TURN * event.movementY;
-    if (view_lat > MAX_LAT) {
-        view_lat = MAX_LAT;
-    } else if (view_lat < -MAX_LAT) {
-        view_lat = -MAX_LAT;
-    }
-    view_lon += MAX_TURN * event.movementX;
-}
+// function glMouseMoveListener(event) {
+//     view_lat += TURN_SPEED * event.movementY;
+//     if (view_lat > MAX_LAT) {
+//         view_lat = MAX_LAT;
+//     } else if (view_lat < -MAX_LAT) {
+//         view_lat = -MAX_LAT;
+//     }
+//     view_lon += TURN_SPEED * event.movementX;
+// }
 
 function setupKeyListeners(window) {
     // window.addEventListener("keypress", glKeyPressedListener, false);

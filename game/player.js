@@ -1,5 +1,5 @@
 // const MAX_VELOCITY = 5;
-// const MAX_TURN = 0.003;
+// const TURN_SPEED = 0.003;
 // const MAX_LAT = 1;
 
 class Player {
@@ -63,13 +63,13 @@ class Player {
     }
 
     moveView(d_lat, d_lon) {
-        this.view_lat += MAX_TURN * d_lat;
+        this.view_lat += TURN_SPEED * d_lat;
         if (this.view_lat > MAX_LAT) {
             this.view_lat = MAX_LAT;
         } else if (this.view_lat < -MAX_LAT) {
             this.view_lat = -MAX_LAT;
         }
-        this.view_lon += MAX_TURN * d_lon;
+        this.view_lon += TURN_SPEED * d_lon;
     }
 
 

@@ -11,6 +11,7 @@ TODO:
 * shooting
 * webRtc p2p game
 * loading sign
+* add position map on the screen
 * point light source
 
 Check it out on [gh-pages](https://xmanatee.github.io/tesseract)

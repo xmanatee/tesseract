@@ -3,10 +3,10 @@ let game_surface = null;
 let u = Math.PI / 2;
 let v = Math.PI / 2 + 1;
 
-let view_height = -0.5;
+const view_height = -0.5;
 
-const MAX_TURN = 0.004;
-const MAX_LAT = 1;
+const TURN_SPEED = 0.004;
+const MAX_LAT = Math.PI * 3 / 4;
 let view_lat = -0.20;
 let view_lon = Math.PI / 2;
 
@@ -51,14 +51,14 @@ function right_start() {
     side_velocity = - MAX_VELOCITY;
 }
 function move_head(dx, dy) {
-    view_lat += MAX_TURN * dy;
+    view_lat += TURN_SPEED * dy;
 
     if (view_lat > MAX_LAT) {
         view_lat = MAX_LAT;
     } else if (view_lat < -MAX_LAT) {
         view_lat = -MAX_LAT;
     }
-    view_lon += MAX_TURN * dx;
+    view_lon += TURN_SPEED * dx;
 }
 
 function player_xyz() {
@@ -98,10 +98,10 @@ function player_view() {
     return viewMatrix;
 }
 
-key_triggers['W'] = forward_start;
-key_triggers['S'] = back_start;
-key_triggers['A'] = left_start;
-key_triggers['D'] = right_start;
+key_triggers['w'] = forward_start;
+key_triggers['s'] = back_start;
+key_triggers['a'] = left_start;
+key_triggers['d'] = right_start;
 
 window.addEventListener("mousemove", (event) => {
     move_head(event.movementX, event.movementY);
