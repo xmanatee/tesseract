@@ -43,11 +43,11 @@ let right_joystick = null;
 function setupKeyListeners(window) {
     if (isMobile()) {
         left_joystick = nipplejs.create({
-            zone: document.getElementById('right_joystick'),
+            zone: document.getElementById('left_joystick'),
             color: 'red'
         });
         right_joystick = nipplejs.create({
-            zone: document.getElementById('left_joystick'),
+            zone: document.getElementById('right_joystick'),
             color: 'blue'
         });
     }
