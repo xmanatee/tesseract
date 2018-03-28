@@ -20,6 +20,8 @@ function startScene(gl) {
     };
     window.addEventListener("keydown", switchMeshes, false);
 
+    Player(key_triggers);
+
     let then = 0;
     function render(now) {
         now *= 0.001;

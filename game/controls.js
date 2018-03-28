@@ -37,9 +37,28 @@ function checkKeys() {
 //     view_lon += TURN_SPEED * event.movementX;
 // }
 
+let left_joystick = null;
+let right_joystick = null;
+
 function setupKeyListeners(window) {
-    // window.addEventListener("keypress", glKeyPressedListener, false);
-    window.addEventListener("keydown", glKeyDownListener, false);
-    window.addEventListener("keyup", glKeyUpListener, false);
-    // window.addEventListener("mousemove", glMouseMoveListener, false)
+    if (isMobile()) {
+        left_joystick = nipplejs.create({
+            zone: document.getElementById('right_joystick'),
+            color: 'red'
+        });
+        right_joystick = nipplejs.create({
+            zone: document.getElementById('left_joystick'),
+            color: 'blue'
+        });
+    }
+    else {
+        document.getElementById('left_joystick').style.display = "none";
+        document.getElementById('right_joystick').style.display = "none";
+
+        // window.addEventListener("keypress", glKeyPressedListener, false);
+        window.addEventListener("keydown", glKeyDownListener, false);
+        window.addEventListener("keyup", glKeyUpListener, false);
+        // window.addEventListener("mousemove", glMouseMoveListener, false)
+    }
+
 }

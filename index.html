@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <!--<link rel="shortcut icon" type="image/png" href="icons/neuro_red.svg">-->
     <!--<link rel="shortcut icon" type="image/png" href="icons/cube_yellow.svg">-->
     <link rel="shortcut icon" type="image/png" href="icons/cube_red.png">
     <title>Tesseract</title>
     <link rel="stylesheet" href="main.css" type="text/css">
+
+    <script src="https://cdn.rawgit.com/yoannmoinet/nipplejs/master/dist/nipplejs.min.js"></script>
 </head>
 
 <body>
@@ -20,29 +22,31 @@
     <p><a href="https://github.com/xmanatee/tesseract">Source</a></p>
     <div id="status"><p>loading<br><span id="status_cnt"></span></p></div>
 </div>
+<div id="left_joystick"></div>
+<div id="right_joystick"></div>
 </body>
 
 <script src="utils/gl-matrix.js"></script>
 
 <script src="main.js"></script>
+
 <script src="gl/main.js"></script>
 <script src="gl/shaders.js"></script>
 <script src="gl/buffer.js"></script>
-<script src="game/controls.js"></script>
 <script src="gl/textures.js"></script>
-<script src="geom/mesh_from_obj.js"></script>
 <script src="gl/load_meshes.js"></script>
 <script src="gl/programs.js"></script>
 <script src="gl/figures.js"></script>
 
-
 <!--<script src="game/player.js"></script>-->
+<script src="game/controls.js"></script>
 <script src="game/move_surface.js"></script>
-
 
 <script src="utils/load_file.js"></script>
 <script src="utils/loader_control.js"></script>
+<script src="utils/mobile.js"></script>
 
+<script src="geom/mesh_from_obj.js"></script>
 <script src="geom/surfaces.js"></script>
 <script src="geom/mesh_from_surface.js"></script>
 

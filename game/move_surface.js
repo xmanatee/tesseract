@@ -5,8 +5,12 @@ let v = Math.PI / 2 + 1;
 
 const view_height = -0.5;
 
-const TURN_SPEED = 0.004;
+const TURN_SPEED = 0.006;
 const MAX_LAT = Math.PI * 3 / 4;
+
+let lat_velocity = 0;
+let lon_velocity = 0;
+
 let view_lat = -0.20;
 let view_lon = Math.PI / 2;
 
@@ -35,8 +39,15 @@ function move(deltaTime) {
 
     u += (Math.cos(view_lon) * stright_velocity + Math.sin(view_lon) * side_velocity) / u_velocity * deltaTime;
     v += (-Math.sin(view_lon) * stright_velocity + Math.cos(view_lon) * side_velocity) / v_velocity * deltaTime * h;
-    stright_velocity = 0;
-    side_velocity = 0;
+
+    move_head(lat_velocity * deltaTime, lon_velocity * deltaTime)
+
+    if (!isMobile()) {
+        stright_velocity = 0;
+        side_velocity = 0;
+        lon_velocity = 0;
+        lat_velocity = 0;
+    }
 }
 function forward_start() {
     stright_velocity = MAX_VELOCITY;
@@ -98,11 +109,34 @@ function player_view() {
     return viewMatrix;
 }
 
-key_triggers['w'] = forward_start;
-key_triggers['s'] = back_start;
-key_triggers['a'] = left_start;
-key_triggers['d'] = right_start;
+function Player(key_triggers) {
+    if (isMobile()) {
+        left_joystick.on("move", (evt, move) => {
+            stright_velocity = MAX_VELOCITY * Math.sin(move.angle.radian) * move.distance / 50;
+            side_velocity = -MAX_VELOCITY * Math.cos(move.angle.radian) * move.distance / 50;
+        });
+        left_joystick.on("end", () => {
+            stright_velocity = 0;
+            side_velocity = 0;
+        });
+        right_joystick.on("move", (evt, move) => {
+            lon_velocity = -6 * Math.sin(move.angle.radian) * move.distance;
+            lat_velocity = 6 * Math.cos(move.angle.radian) * move.distance;
+        });
+        right_joystick.on("end", () => {
+            lon_velocity = 0;
+            lat_velocity = 0;
+        });
+    }
+    else {
+        key_triggers['w'] = forward_start;
+        key_triggers['s'] = back_start;
+        key_triggers['a'] = left_start;
+        key_triggers['d'] = right_start;
 
-window.addEventListener("mousemove", (event) => {
-    move_head(event.movementX, event.movementY);
-}, false);
+        window.addEventListener("mousemove", (event) => {
+            lon_velocity = 20 * event.movementY;
+            lat_velocity = 20 * event.movementX;
+        }, false);
+    }
+}

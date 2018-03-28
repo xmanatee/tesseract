@@ -48,7 +48,7 @@ const figuresConfig = [
         //     speed: -1,
         // },
         start_translation: {
-            vec: [0.05, 0, -0.2],
+            vec: [0.05, -0.035, -0.2],
         },
         texture_url: "textures/grid_color.jpg",
     },

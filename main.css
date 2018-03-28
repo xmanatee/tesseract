@@ -44,3 +44,23 @@ body, #glcanvas {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+#left_joystick, #right_joystick {
+    position: absolute;
+    bottom: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: lightgray;
+    width: 200px;
+    height: 200px;
+}
+
+#left_joystick {
+    /*left: 0;*/
+    right: 0;
+}
+
+#right_joystick {
+    left: 0;
+    /*right: 0;*/
+}

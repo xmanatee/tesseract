@@ -70,11 +70,21 @@ function player_view() {
     return viewMatrix;
 }
 
-key_triggers['w'] = forward_start;
-key_triggers['s'] = back_start;
-key_triggers['a'] = left_start;
-key_triggers['d'] = right_start;
+function Player(key_triggers) {
+    key_triggers['w'] = forward_start;
+    key_triggers['s'] = back_start;
+    key_triggers['a'] = left_start;
+    key_triggers['d'] = right_start;
 
-window.addEventListener("mousemove", (event) => {
-    move_head(event.movementX, event.movementY);
-}, false);
+    window.addEventListener("mousemove", (event) => {
+        move_head(event.movementX, event.movementY);
+    }, false);
+}
+
+left_joystick.on("move", (move) => {
+    console.log(move);
+});
+
+left_joystick.on("move", (move) => {
+    console.log(move);
+});
