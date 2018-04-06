@@ -27,11 +27,11 @@ window.onload = function() {
     }
 
     fixSize(canvas, gl);
-    window.onresize = () => { fixSize(canvas, gl); };
     canvas.ondblclick = () => { requestFullscreen(canvas); };
+    window.onresize = () => { fixSize(canvas, gl); };
 
     load_meshes(obj_paths, () => {
-        startScene(gl);
+        startGame(gl);
     });
 
     setupKeyListeners(window);

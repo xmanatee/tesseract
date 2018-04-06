@@ -3,6 +3,9 @@ function scale(x, mu, s) {
 }
 
 function mesh_from_surface(surface, u_det, v_det, color_fn) {
+    if (surface.is4d) {
+        return mesh_3d_from_mesh_4d(mesh_from_surface_4d(surface, u_det, v_det, color_fn), [1, 1, 1, 1], 0);
+    }
     const mesh = {
         positions: [],
         normals: [],
@@ -49,9 +52,7 @@ function mesh_from_surface(surface, u_det, v_det, color_fn) {
             for (let v_i = 0; v_i < v_det + 1; ++v_i) {
                 const tu = u_i / u_det;
                 const tv = v_i / v_det;
-                const u = scale(tu, uv_range.u_min, uv_range.u_max - uv_range.u_min);
-                const v = scale(tv, uv_range.v_min, uv_range.v_max - uv_range.v_min);
-                mesh.colors.push(...color_fn(u, v));
+                mesh.colors.push(...color_fn(tu, tv));
             }
         }
     }

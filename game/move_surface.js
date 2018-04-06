@@ -22,10 +22,11 @@ let side_velocity = 0;
 let h = 1; // HACK
 
 function init_game_surface() {
-    const inner = false;
-    // const inner = true;
-    game_surface = new Thor(8, 5, inner);
+    // const inner = false;
+    const inner = true;
+    // game_surface = new Thor(8, 5, inner);
     // game_surface = new Sphere(8, inner);
+    game_surface = new Plane(8, inner);
     h = 1;
     if (!inner) {
         h = -1;

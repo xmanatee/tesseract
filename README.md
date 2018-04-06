@@ -7,7 +7,6 @@ TOFIX:
 
 TODO:
 
-* mobile control
 * shooting
 * webRtc p2p game
 * loading sign
@@ -23,3 +22,10 @@ Tutorials on WebGL [here](https://developer.mozilla.org/en-US/docs/Web/API/WebGL
 OBJ models:
 * (http://paulbourke.net/dataformats/obj/)
 * (https://www.cgtrader.com/free-3d-models)
+
+
+Cool shaders:
+* https://www.awwwards.com/inspiration/58308d3fe138233cb758f091
+* https://www.shadertoy.com/view/4dGyRt
+* https://www.awwwards.com/inspiration/5978541ae1382310dd5a78fa
+    

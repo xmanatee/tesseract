@@ -2,7 +2,7 @@
 const FPS_LR = 0.1;
 let fps = 0;
 
-function startScene(gl) {
+function startGame(gl) {
 
     init_game_surface();
 

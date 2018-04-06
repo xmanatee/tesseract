@@ -1,20 +1,31 @@
 const figuresConfig = [
+    // {
+    //     id: "thor",
+    //     program_id: "textured",
+    //     surface: {
+    //         type: "thor",
+    //         params: [8, 5],
+    //         // type: "sphere",
+    //         // params: [8],
+    //         det: [100, 100],
+    //     },
+    //     on: true,
+    //     // rotation: {
+    //     //     angle: 0,
+    //     //     vec: [1, 0, 0],
+    //     //     speed: 1,
+    //     // },
+    //     texture_url: "textures/Lava_001_COLOR.png",
+    // },
     {
-        id: "thor",
+        id: "thor4d",
         program_id: "textured",
         surface: {
-            type: "thor",
-            params: [8, 5],
-            // type: "sphere",
-            // params: [8],
-            det: [100, 100],
+            type: "thor4d",
+            params: [10, 5.25, 3],
+            det: [20, 20, 20],
         },
         on: true,
-        // rotation: {
-        //     angle: 0,
-        //     vec: [1, 0, 0],
-        //     speed: 1,
-        // },
         texture_url: "textures/Lava_001_COLOR.png",
     },
     {
@@ -119,6 +130,9 @@ function build_figures(gl, figs_config) {
             let surface_type = null;
             if (fig_config.surface.type === "thor") {
                 surface_type = Thor;
+            }
+            else if (fig_config.surface.type === "thor4d") {
+                surface_type = Thor4d;
             }
             else if (fig_config.surface.type === "sphere") {
                 surface_type = Sphere;

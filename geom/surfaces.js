@@ -115,3 +115,59 @@ class Thor {
         return this.r_small;
     }
 }
+
+class Plane {
+    constructor(r, inner) {
+        this.r = r;
+        this.inner = inner;
+    }
+
+    uv_range() {
+        return {
+            u_min: 0, u_max: 1,
+            v_min: 0, v_max: 1,
+        }
+    }
+
+    xyz(u, v) {
+        const x = this.r * u;
+        const y = this.r * v;
+        const z = 0;
+        return {x: x, y: y, z: z};
+    }
+
+    nxyz(u, v) {
+        const nx = 0;
+        const ny = 0;
+        const nz = 1;
+        if (this.inner) {
+            return {x: nx, y: ny, z: nz};
+        } else {
+            return {x: -nx, y: -ny, z: -nz};
+        }
+    }
+
+    du(u, v) {
+        const dx_du = 1;
+        const dy_du = 0;
+        const dz_du = 0;
+        return {x: dx_du, y: dy_du, z: dz_du};
+    }
+    du_len(u, v) {
+        return this.r;
+    }
+
+    dv(u, v) {
+        const dx_dv = 0;
+        const dy_dv = 1;
+        const dz_dv = 0;
+        if (this.inner) {
+            return {x: dx_dv, y: dy_dv, z: dz_dv};
+        } else {
+            return {x: -dx_dv, y: -dy_dv, z: -dz_dv};
+        }
+    }
+    dv_len(u, v) {
+        return this.r;
+    }
+}
