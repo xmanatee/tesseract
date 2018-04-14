@@ -59,7 +59,6 @@ function drawScene(gl, figures) {
 }
 
 function drawFigure(gl, figure) {
-
     gl.useProgram(figure.programInfo.program);
 
     const fieldOfView = 45 * Math.PI / 180;
@@ -76,6 +75,7 @@ function drawFigure(gl, figure) {
         zFar);
 
     const viewMatrix = player_view();
+    const viewPosition = player_xyz();
 
     const modelMatrix = figure_view(figure);
 
@@ -94,14 +94,6 @@ function drawFigure(gl, figure) {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, figure.buffers.indices);
 
-    const normalMatrix = mat4.create();
-    mat4.invert(normalMatrix, modelMatrix);
-    mat4.transpose(normalMatrix, normalMatrix);
-
-    gl.uniformMatrix4fv(
-        figure.programInfo.uniformLocations.normalMatrix,
-        false,
-        normalMatrix);
     gl.uniformMatrix4fv(
         figure.programInfo.uniformLocations.projectionMatrix,
         false,
@@ -114,6 +106,15 @@ function drawFigure(gl, figure) {
         figure.programInfo.uniformLocations.modelMatrix,
         false,
         modelMatrix);
+    gl.uniform3fv(
+        figure.programInfo.uniformLocations.viewPosition,
+        viewPosition);
+
+    // let sec2 = Math.sin(new Date().getTime() / 1000);
+    //
+    // gl.uniform1f(
+    //     figure.programInfo.uniformLocations.uScale,
+    //     sec2);
 
     if ("texture" in figure) {
         gl.activeTexture(gl.TEXTURE0);

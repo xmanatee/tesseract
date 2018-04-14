@@ -7,6 +7,7 @@ TOFIX:
 
 TODO:
 
+* repetitive resize
 * shooting
 * webRtc p2p game
 * loading sign

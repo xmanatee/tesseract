@@ -9,7 +9,9 @@ function fixSize(canvas, gl) {
 function requestFullscreen(canvas) {
     canvas.requestFullScreen = canvas.requestFullScreen || canvas.webkitRequestFullScreen || canvas.mozRequestFullScreen;
     canvas.requestFullScreen();
+}
 
+function requestPointerLock(canvas) {
     canvas.requestPointerLock = canvas.requestPointerLock || canvas.webkitRequestPointerLock || canvas.mozRequestPointerLock;
     canvas.requestPointerLock();
 }
@@ -27,7 +29,7 @@ window.onload = function() {
     }
 
     fixSize(canvas, gl);
-    canvas.ondblclick = () => { requestFullscreen(canvas); };
+    canvas.ondblclick = () => { requestFullscreen(canvas); requestPointerLock(canvas); };
     window.onresize = () => { fixSize(canvas, gl); };
 
     load_meshes(obj_paths, () => {

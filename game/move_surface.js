@@ -41,7 +41,7 @@ function move(deltaTime) {
     u += (Math.cos(view_lon) * stright_velocity + Math.sin(view_lon) * side_velocity) / u_velocity * deltaTime;
     v += (-Math.sin(view_lon) * stright_velocity + Math.cos(view_lon) * side_velocity) / v_velocity * deltaTime * h;
 
-    move_head(lat_velocity * deltaTime, lon_velocity * deltaTime)
+    move_head(lat_velocity * deltaTime, lon_velocity * deltaTime);
 
     if (!isMobile()) {
         stright_velocity = 0;
@@ -81,7 +81,7 @@ function player_xyz() {
 function player_view() {
     const forward = vec(game_surface.du(u, v));
     const up = vec(game_surface.nxyz(u, v));
-    let right = vec(game_surface.dv(u, v));
+    const right = vec(game_surface.dv(u, v));
 
     const viewMatrix = mat4.fromValues(
         ...right, 0,

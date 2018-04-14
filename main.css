@@ -9,7 +9,7 @@ body, #glcanvas {
 }
 
 #glcanvas {
-    cursor: none;
+    /*cursor: none;*/
     /*border: red;*/
 }
 
@@ -52,8 +52,8 @@ body, #glcanvas {
     margin: 0;
     background: rgba(0, 0, 0, 0.6);
     color: lightgray;
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     z-index: 2147483647;
     vertical-align: bottom;
     display: table;
