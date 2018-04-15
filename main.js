@@ -30,6 +30,7 @@ function requestPointerLock(canvas) {
 let fps_p = null;
 
 window.onload = function() {
+    const extra_div = document.getElementById("extra_div");
     const canvas = document.getElementById("glcanvas");
     fps_p = document.getElementById("fps_p");
     const gl = canvas.getContext("webgl2");
@@ -40,8 +41,20 @@ window.onload = function() {
     }
 
     tryFixSize(gl);
-    canvas.ondblclick = () => { requestFullscreen(canvas); requestPointerLock(canvas); };
+
+    canvas.ondblclick = () => {
+        if (extra_div.style.display === "none") {
+            extra_div.style.display = "block";
+        } else {
+            requestFullscreen(canvas);
+            requestPointerLock(canvas);
+        }
+    };
     document.getElementById("pointerlock_btn").onclick = () => { requestPointerLock(canvas); };
+
+    document.getElementById("hide_btn").onclick = () => {
+        extra_div.style.display = "none";
+    };
 
     load_meshes(obj_paths, () => {
         startGame(gl);
