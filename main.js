@@ -41,6 +41,7 @@ window.onload = function() {
 
     tryFixSize(gl);
     canvas.ondblclick = () => { requestFullscreen(canvas); requestPointerLock(canvas); };
+    document.getElementById("pointerlock_btn").onclick = () => { requestPointerLock(canvas); };
 
     load_meshes(obj_paths, () => {
         startGame(gl);
