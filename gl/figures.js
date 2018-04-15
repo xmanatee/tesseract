@@ -25,6 +25,11 @@ const figuresConfig = [
             params: [10, 5.25, 3],
             det: [20, 20, 20],
         },
+        intensity: {
+            mean: 2.5,
+            scale: 1.5,
+            period: 4.0,
+        },
         on: true,
         texture_url: "textures/Lava_001_COLOR.png",
     },
@@ -53,11 +58,6 @@ const figuresConfig = [
         },
         on: true,
         relative: true,
-        // rotation: {
-        //     angle: 0,
-        //     vec: [0, 1, 0],
-        //     speed: -1,
-        // },
         start_translation: {
             vec: [0.05, -0.035, -0.2],
         },
@@ -118,6 +118,7 @@ function build_figures(gl, figs_config) {
             on: fig_config.on,
             relative: fig_config.relative,
             rotation: fig_config.rotation,
+            intensity: fig_config.intensity,
             start_rotation: fig_config.start_rotation,
             start_translation: fig_config.start_translation,
             texture: loadTexture(gl, fig_config.texture_url),

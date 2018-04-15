@@ -34,11 +34,14 @@ function init_programs(gl) {
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            viewMatrix: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
+            // modelMatrix: gl.getUniformLocation(shaderProgram, 'uModelMatrix'),
+            // viewMatrix: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
             viewPosition: gl.getUniformLocation(shaderProgram, 'uViewPosition'),
-            modelMatrix: gl.getUniformLocation(shaderProgram, 'uModelMatrix'),
+            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
             normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
             uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
+            uIntensity: gl.getUniformLocation(shaderProgram, 'uIntensity'),
+            uTime: gl.getUniformLocation(shaderProgram, 'uTime'),
             // uScale: gl.getUniformLocation(shaderProgram, 'uScale'),
         },
     };

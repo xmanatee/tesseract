@@ -3,10 +3,11 @@ let game_surface = null;
 let u = Math.PI / 2;
 let v = Math.PI / 2 + 1;
 
-const view_height = -0.5;
+let view_shift_up = -0.5;
+let view_shift_right = 0;
 
 const TURN_SPEED = 0.006;
-const MAX_LAT = Math.PI * 3 / 4;
+const MAX_LAT = Math.PI * 3 / 7;
 
 let lat_velocity = 0;
 let lon_velocity = 0;
@@ -88,8 +89,10 @@ function player_view() {
         ...up, 0,
         ...forward, 0,
         0, 0, 0, 1);
+    const view_shift = player_xyz();
 
     mat4.transpose(viewMatrix, viewMatrix);
+
     mat4.rotate(
         viewMatrix,
         viewMatrix,
@@ -100,12 +103,15 @@ function player_view() {
         viewMatrix,
         view_lon,
         up);
-    const h_vec = up;
-    vec3.scaleAndAdd(h_vec, player_xyz(), up, view_height);
+
+    vec3.scaleAndAdd(view_shift, view_shift, up, view_shift_up);
+    const new_right = [viewMatrix[0], viewMatrix[4], viewMatrix[8]];
+    vec3.scaleAndAdd(view_shift, view_shift, new_right, view_shift_right);
+
     mat4.translate(
         viewMatrix,
         viewMatrix,
-        h_vec);
+        view_shift);
 
     return viewMatrix;
 }

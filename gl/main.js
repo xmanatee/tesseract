@@ -2,6 +2,16 @@
 const FPS_LR = 0.1;
 let fps = 0;
 
+let binocular = false;
+
+function clearDrawBuffers(gl) {
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearDepth(1.0);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
 function startGame(gl) {
 
     init_game_surface();
@@ -12,13 +22,13 @@ function startGame(gl) {
 
     const figures = build_figures(gl, figuresConfig);
 
-    const switchMeshes = (event) => {
-        if (event.key === "q") {
-            figures[3].on = !figures[3].on;
-            figures[4].on = !figures[4].on;
-        }
+    document.getElementById("easter_btn").onclick = () => {
+        figures[3].on = !figures[3].on;
+        figures[4].on = !figures[4].on;
     };
-    window.addEventListener("keydown", switchMeshes, false);
+    document.getElementById("binocular_btn").onclick = () => {
+        binocular = !binocular;
+    };
 
     Player(key_triggers);
 
@@ -40,18 +50,27 @@ function startGame(gl) {
         fps = fps + FPS_LR * (1 / deltaTime  - fps);
         fps_p.innerText = fps.toFixed(2);
 
-        drawScene(gl, figures);
+        tryFixSize(gl);
+        clearDrawBuffers(gl);
+        if (!binocular) {
+            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+            drawScene(gl, figures);
+        } else {
+            const half_width = gl.drawingBufferWidth / 2;
+            view_shift_right = 0.15;
+            gl.viewport(0, 0, half_width, gl.drawingBufferHeight);
+            drawScene(gl, figures);
+            view_shift_right = -0.15;
+            gl.viewport(half_width, 0, half_width, gl.drawingBufferHeight);
+            drawScene(gl, figures);
+            view_shift_right = 0;
+        }
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 }
 
 function drawScene(gl, figures) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clearDepth(1.0);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     figures.filter(figure => figure.on).forEach((figure) => {
         drawFigure(gl, figure);
@@ -62,7 +81,8 @@ function drawFigure(gl, figure) {
     gl.useProgram(figure.programInfo.program);
 
     const fieldOfView = 45 * Math.PI / 180;
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const aspect = gl.getParameter(gl.VIEWPORT)[2] / gl.getParameter(gl.VIEWPORT)[3];
+    // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
 
@@ -76,8 +96,11 @@ function drawFigure(gl, figure) {
 
     const viewMatrix = player_view();
     const viewPosition = player_xyz();
-
     const modelMatrix = figure_view(figure);
+
+    const modelViewMatrix = mat4.create();
+    mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
+
 
     figure.buffers.attributes.forEach((attr) => {
         gl.bindBuffer(gl.ARRAY_BUFFER, figure.buffers[attr.bufferName]);
@@ -98,20 +121,35 @@ function drawFigure(gl, figure) {
         figure.programInfo.uniformLocations.projectionMatrix,
         false,
         projectionMatrix);
+    // gl.uniformMatrix4fv(
+    //     figure.programInfo.uniformLocations.viewMatrix,
+    //     false,
+    //     viewMatrix);
+    // gl.uniformMatrix4fv(
+    //     figure.programInfo.uniformLocations.modelMatrix,
+    //     false,
+    //     modelMatrix);
     gl.uniformMatrix4fv(
-        figure.programInfo.uniformLocations.viewMatrix,
+        figure.programInfo.uniformLocations.modelViewMatrix,
         false,
-        viewMatrix);
-    gl.uniformMatrix4fv(
-        figure.programInfo.uniformLocations.modelMatrix,
-        false,
-        modelMatrix);
+        modelViewMatrix);
     gl.uniform3fv(
         figure.programInfo.uniformLocations.viewPosition,
         viewPosition);
 
-    // let sec2 = Math.sin(new Date().getTime() / 1000);
-    //
+    let figure_intensity = 1;
+    const time_sec = new Date().getTime() / 1000.0;
+    if (figure.intensity) {
+        figure_intensity = figure.intensity.mean + figure.intensity.scale * Math.sin(2 * Math.PI * time_sec / figure.intensity.period);
+    }
+
+    gl.uniform1f(
+        figure.programInfo.uniformLocations.uIntensity,
+        figure_intensity);
+    gl.uniform1f(
+        figure.programInfo.uniformLocations.uTime,
+        time_sec);
+
     // gl.uniform1f(
     //     figure.programInfo.uniformLocations.uScale,
     //     sec2);

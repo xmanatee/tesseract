@@ -1,7 +1,18 @@
-function fixSize(canvas, gl) {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    gl.viewport(0, 0, canvas.width, canvas.height);
+function tryFixSize(gl) {
+    // const width = gl.canvas.clientWidth;
+    // const height = gl.canvas.clientHeight;
+
+    // const realToCSSPixels = window.devicePixelRatio;
+    // const width  = Math.floor(gl.canvas.clientWidth  * realToCSSPixels);
+    // const height = Math.floor(gl.canvas.clientHeight * realToCSSPixels);
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    if (gl.canvas.width !== width || gl.canvas.height !== height) {
+        gl.canvas.width = width;
+        gl.canvas.height = height;
+    }
 }
 
 
@@ -28,9 +39,8 @@ window.onload = function() {
         return;
     }
 
-    fixSize(canvas, gl);
+    tryFixSize(gl);
     canvas.ondblclick = () => { requestFullscreen(canvas); requestPointerLock(canvas); };
-    window.onresize = () => { fixSize(canvas, gl); };
 
     load_meshes(obj_paths, () => {
         startGame(gl);
