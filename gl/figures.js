@@ -39,7 +39,7 @@ const figuresConfig = [
         surface: {
             type: "sphere",
             params: [40],
-            det: [200, 200],
+            det: [100, 100],
         },
         on: true,
         rotation: {

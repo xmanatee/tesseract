@@ -44,7 +44,7 @@ const textureFragmentShader = `
     const highp vec3 lightColor_2 = vec3(0, 0.2, 0.8);
     const highp vec3 lightPos_1 = -100.0 * vec3(0.75, 0.3, 0.6);
     const highp vec3 lightPos_2 = -100.0 * vec3(-1, -0.5, 0);
-    const highp float specularStrength = 0.5;
+    const highp float specularStrength = 0.75;
     const highp float specularDensity = 256.0;
 
     void main() {
@@ -55,8 +55,8 @@ const textureFragmentShader = `
         highp vec3 lightDir_1 = normalize(lightPos_1 - vVertexPosition);
         highp vec3 lightDir_2 = normalize(lightPos_2 - vVertexPosition);
         highp vec3 viewDir = normalize(uViewPosition - vVertexPosition);
-        highp vec3 reflectLightDir_1 = reflect(lightDir_1, vVertexNormal);
-        highp vec3 reflectLightDir_2 = reflect(lightDir_2, vVertexNormal);
+        highp vec3 reflectLightDir_1 = reflect(-lightDir_1, vVertexNormal);
+        highp vec3 reflectLightDir_2 = reflect(-lightDir_2, vVertexNormal);
 
         highp vec3 diffuseLight_1 = lightColor_1 * max(dot(vVertexNormal, lightDir_1), 0.0);
         highp vec3 diffuseLight_2 = lightColor_2 * max(dot(vVertexNormal, lightDir_2), 0.0);
