@@ -1,3 +1,4 @@
+
 const figuresConfig = [
     // {
     //     id: "thor",
@@ -24,6 +25,7 @@ const figuresConfig = [
             type: "thor4d",
             params: [10, 5.25, 3],
             det: [20, 20, 20],
+            // det: [5, 5, 5],
         },
         intensity: {
             mean: 2.5,
@@ -31,7 +33,7 @@ const figuresConfig = [
             period: 4.0,
         },
         on: true,
-        texture_url: "textures/Lava_001_COLOR.png",
+        texture_url: "resources/textures/Lava_001_COLOR.png",
     },
     {
         id: "sphere",
@@ -47,7 +49,7 @@ const figuresConfig = [
             vec: [0, 1, 0],
             speed: 0.05,
         },
-        texture_url: "textures/Tiles_012_ROUGH.jpg",
+        texture_url: "resources/textures/Tiles_012_ROUGH.jpg",
     },
     {
         id: "cerberus",
@@ -61,7 +63,7 @@ const figuresConfig = [
         start_translation: {
             vec: [0.05, -0.035, -0.2],
         },
-        texture_url: "textures/grid_color.jpg",
+        texture_url: "resources/textures/grid_color.jpg",
     },
     {
         id: "naruto",
@@ -80,7 +82,7 @@ const figuresConfig = [
             angle: -0.5 * Math.PI,
             vec: [1, 0, 0],
         },
-        texture_url: "textures/naruto_1.png",
+        texture_url: "resources/textures/naruto_1.png",
     },
     {
         id: "flash",
@@ -103,7 +105,7 @@ const figuresConfig = [
         // start_translation: {
         //     vec: [0, -0.15, -0.5],
         // },
-        texture_url: "textures/FL_CW_A_1.png",
+        texture_url: "resources/textures/FL_CW_A_1.png",
     },
 ];
 
@@ -125,7 +127,7 @@ function build_figures(gl, figs_config) {
         };
         let mesh = null;
         if (fig_config.obj) {
-            mesh = mesh_from_obj(obj_meshes[fig_config.obj.name], fig_config.obj.scale)
+            mesh = mesh_from_obj_str(obj_meshes[fig_config.obj.name], fig_config.obj.scale)
         }
         else if (fig_config.surface) {
             let surface_type = null;
@@ -139,7 +141,7 @@ function build_figures(gl, figs_config) {
                 surface_type = Sphere;
             }
             const surface = new surface_type(...fig_config.surface.params);
-            mesh = mesh_from_surface(surface, ...fig_config.surface.det);
+            mesh = mesh_from_surface(surface, fig_config.surface.det);
         }
 
         figure.buffers = init_buffers(gl, mesh);

@@ -21,14 +21,14 @@ const obj_paths = [
     // "objs/bike.obj", // too big
     // "objs/bugatti.obj", // too big
     // "objs/bunny2.obj",
-    "objs/cerberus.obj",
+    "resources/objs/cerberus.obj",
     // "objs/colt.obj",
     // "objs/darth_vader.obj", //too big
     // "objs/death_star.obj", // too big
-    "objs/die.obj",
+    "resources/objs/die.obj",
     // "objs/dog.obj",
     // "objs/female.obj",
-    "objs/flash.obj",
+    "resources/objs/flash.obj",
     // "objs/heart.obj",
     // "objs/helicopter.obj",
     // "objs/hp.obj", // too big
@@ -38,7 +38,7 @@ const obj_paths = [
     // "objs/kodama.obj", // broken
     // "objs/lamp.obj",
     // "objs/mp412.obj",
-    "objs/naruto.obj",
+    "resources/objs/naruto.obj",
     // "objs/stickman.obj",
     // "objs/suzanne.obj",
     // "objs/suzanne_2.obj",

@@ -2,10 +2,22 @@ function scale(x, mu, s) {
     return mu + x * s;
 }
 
-function mesh_from_surface(surface, u_det, v_det, color_fn) {
+function mesh_from_surface(surface, det, color_fn) {
     if (surface.is4d) {
-        return mesh_3d_from_mesh_4d(mesh_from_surface_4d(surface, u_det, v_det, color_fn), [1, 1, 1, 1], 0);
+        const plane = scaleMat4d([
+            [1, 1, -1, -1],
+            [1, -1, 1, -1],
+            [1, -1, -1, 1],
+            [1, 1, 1, 1],
+        ], 0.5);
+        const plane_base = [0, 0, 0, 0];
+        return mesh_3d_from_mesh_4d(
+            mesh_4d_from_surface_4d(surface, det, color_fn),
+            plane,
+            plane_base
+        );
     }
+    const [u_det, v_det] = det;
     const mesh = {
         positions: [],
         normals: [],

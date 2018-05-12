@@ -30,6 +30,14 @@ function startGame(gl) {
         binocular = !binocular;
     };
 
+    key_triggers["r"] = () => {
+        figures.forEach((figure) => {
+            if (figure === "thor4d") {
+                // new_figures
+            }
+        })
+    };
+
     Player(key_triggers);
 
     let then = 0;
@@ -57,10 +65,10 @@ function startGame(gl) {
             drawScene(gl, figures);
         } else {
             const half_width = gl.drawingBufferWidth / 2;
-            view_shift_right = 0.15;
+            view_shift_right = 0.1;
             gl.viewport(0, 0, half_width, gl.drawingBufferHeight);
             drawScene(gl, figures);
-            view_shift_right = -0.15;
+            view_shift_right = -0.1;
             gl.viewport(half_width, 0, half_width, gl.drawingBufferHeight);
             drawScene(gl, figures);
             view_shift_right = 0;
@@ -125,10 +133,10 @@ function drawFigure(gl, figure) {
     //     figure.programInfo.uniformLocations.viewMatrix,
     //     false,
     //     viewMatrix);
-    // gl.uniformMatrix4fv(
-    //     figure.programInfo.uniformLocations.modelMatrix,
-    //     false,
-    //     modelMatrix);
+    gl.uniformMatrix4fv(
+        figure.programInfo.uniformLocations.modelMatrix,
+        false,
+        modelMatrix);
     gl.uniformMatrix4fv(
         figure.programInfo.uniformLocations.modelViewMatrix,
         false,

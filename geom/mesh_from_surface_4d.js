@@ -2,13 +2,14 @@ function scale(x, mu, s) {
     return mu + x * s;
 }
 
-function mesh_from_surface_4d(surface, w_det, u_det, v_det, color_fn) {
+function mesh_4d_from_surface_4d(surface, det, color_fn) {
     const mesh = {
         positions: [],
         normals: [],
         textures: [],
         indices: [],
     };
+    const [w_det, u_det, v_det] = det;
 
     const wuv_range = surface.wuv_range();
 
@@ -78,14 +79,14 @@ function mesh_from_surface_4d(surface, w_det, u_det, v_det, color_fn) {
     return mesh;
 }
 
-function mesh_3d_from_mesh_4d(mesh_4d) {
-    const plane = scaleMat4d([
-        [1, 1, -1, -1],
-        [1, -1, 1, -1],
-        [1, -1, -1, 1],
-        [1, 1, 1, 1],
-    ], 0.5);
-    const plane_base = [0, 0, 0, 0];
+function mesh_3d_from_mesh_4d(mesh_4d, plane, plane_base) {
+    // const plane = scaleMat4d([
+    //     [1, 1, -1, -1],
+    //     [1, -1, 1, -1],
+    //     [1, -1, -1, 1],
+    //     [1, 1, 1, 1],
+    // ], 0.5);
+    // const plane_base = [0, 0, 0, 0];
 
     const abcd = plane[3];
 

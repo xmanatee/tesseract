@@ -4,7 +4,7 @@ if (typeof String.prototype.startsWith !== "function") {
     };
 }
 
-function mesh_from_obj(objectData, scale_pos=1, scale_tex=null) {
+function mesh_from_obj_str(object_str, scale_pos=1, scale_tex=null) {
     let positions = [];
     let normals = [];
     let textures = [];
@@ -18,7 +18,7 @@ function mesh_from_obj(objectData, scale_pos=1, scale_tex=null) {
         }
     }
 
-    let lines = objectData.split("\n");
+    let lines = object_str.split("\n");
     for (let i = 0; i < lines.length; i++) {
         if (lines[i].startsWith("v ")) {
             const line_floats = lines[i].slice(2).split(" ").filter(word => word).map(str => parseFloat(str));

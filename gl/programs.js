@@ -34,7 +34,7 @@ function init_programs(gl) {
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            // modelMatrix: gl.getUniformLocation(shaderProgram, 'uModelMatrix'),
+            modelMatrix: gl.getUniformLocation(shaderProgram, 'uModelMatrix'),
             // viewMatrix: gl.getUniformLocation(shaderProgram, 'uViewMatrix'),
             viewPosition: gl.getUniformLocation(shaderProgram, 'uViewPosition'),
             modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
