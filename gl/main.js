@@ -1,101 +1,44 @@
 
-let x = 0.0;
-let y = 0.0;
-let z = -10.0;
-
-const MAX_TURN = 0.003;
-const MAX_LAT = 1;
-let view_lat = 0;
-let view_lon = 0;
-
-const MAX_VELOCITY = 5.0;
-let stright_velocity = 0;
-let side_velocity = 0;
-
 const FPS_LR = 0.1;
 let fps = 0;
 
-function draw(gl) {
-    let shaderProgram = null;
-    shaderProgram = initShaderProgram(gl, vertexShader, colorFragmentShader);
-    const colorProgramInfo = {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-            // textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
-            vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
-            vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-            normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
-            // uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
-        },
+let binocular = false;
+
+function clearDrawBuffers(gl) {
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearDepth(1.0);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
+function startGame(gl) {
+
+    init_game_surface();
+
+    // const player = new Player(-10, 0, 0, 0, key_triggers);
+
+    init_programs(gl);
+
+    const figures = build_figures(gl, figuresConfig);
+
+    document.getElementById("easter_btn").onclick = () => {
+        figures[3].on = !figures[3].on;
+        figures[4].on = !figures[4].on;
+    };
+    document.getElementById("binocular_btn").onclick = () => {
+        binocular = !binocular;
     };
 
-    shaderProgram = initShaderProgram(gl, vertexShader, textureFragmentShader);
-    const textureProgramInfo = {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-            textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
-            vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
-            // vertexColor: gl.getAttribLocation(shaderProgram, 'aVertexColor'),
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-            normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
-            uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
-        },
+    key_triggers["r"] = () => {
+        figures.forEach((figure) => {
+            if (figure === "thor4d") {
+                // new_figures
+            }
+        })
     };
 
-    const kwargs = {
-        cube_half_side: 0.3,
-
-        thor_r_big: 2,
-        thor_num_lon: 100,
-        thor_r_small: 1,
-        thor_num_lat: 30,
-
-        sphere_r: 40,
-        sphere_num_lon: 100,
-        sphere_num_lat: 100,
-    };
-
-    const figuresInfo = [
-        {
-            programInfo: textureProgramInfo,
-            buffers: initBuffers(gl, buildThorMesh, kwargs),
-            rotation: {
-                angle: 0,
-                vec: [1, 0, 0],
-                speed: 1,
-            },
-            texture: loadTexture(gl, 'textures/Lava_001_COLOR.png'),
-        },
-        {
-            programInfo: textureProgramInfo,
-            buffers: initBuffers(gl, buildSphereMesh, kwargs),
-            rotation: {
-                angle: 0,
-                vec: [0, 1, 0],
-                speed: 0.05,
-            },
-            texture: loadTexture(gl, 'textures/Lava_001_COLOR.png'),
-        },
-        {
-            programInfo: textureProgramInfo,
-            buffers: initBuffers(gl, buildCubeMesh, kwargs),
-            rotation: {
-                angle: 0,
-                vec: [1, 1, 1],
-                speed: 10,
-            },
-            texture: loadTexture(gl, 'textures/Lava_002_COLOR.png'),
-        },
-    ];
+    Player(key_triggers);
 
     let then = 0;
     function render(now) {
@@ -103,56 +46,55 @@ function draw(gl) {
         const deltaTime = now - then;
         then = now;
 
-        figuresInfo.forEach((figureInfo) => {
-            if (figureInfo.rotation) {
-                figureInfo.rotation.angle += deltaTime * figureInfo.rotation.speed;
+        figures.forEach((figure) => {
+            if (figure.rotation) {
+                figure.rotation.angle += deltaTime * figure.rotation.speed;
             }
         });
         checkKeys();
-        z += (Math.cos(view_lon) * stright_velocity + Math.sin(view_lon) * side_velocity) * deltaTime;
-        x += (-Math.sin(view_lon) * stright_velocity + Math.cos(view_lon) * side_velocity) * deltaTime;
-        stright_velocity = 0;
-        side_velocity = 0;
+
+        move(deltaTime);
 
         fps = fps + FPS_LR * (1 / deltaTime  - fps);
         fps_p.innerText = fps.toFixed(2);
 
-        drawScene(gl, figuresInfo);
+        tryFixSize(gl);
+        clearDrawBuffers(gl);
+        if (!binocular) {
+            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+            drawScene(gl, figures);
+        } else {
+            const half_width = gl.drawingBufferWidth / 2;
+            view_shift_right = 0.1;
+            gl.viewport(0, 0, half_width, gl.drawingBufferHeight);
+            drawScene(gl, figures);
+            view_shift_right = -0.1;
+            gl.viewport(half_width, 0, half_width, gl.drawingBufferHeight);
+            drawScene(gl, figures);
+            view_shift_right = 0;
+        }
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 }
 
-function drawScene(gl, figuresInfo) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clearDepth(1.0);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+function drawScene(gl, figures) {
 
-    figuresInfo.forEach((figureInfo) => {
-        drawFigure(gl, figureInfo);
+    figures.filter(figure => figure.on).forEach((figure) => {
+        drawFigure(gl, figure);
     })
-
 }
 
-function drawFigure(gl, figureInfo) {
+function drawFigure(gl, figure) {
+    gl.useProgram(figure.programInfo.program);
 
-    // Create a perspective matrix, a special matrix that is
-    // used to simulate the distortion of perspective in a camera.
-    // Our field of view is 45 degrees, with a width/height
-    // ratio that matches the display size of the canvas
-    // and we only want to see objects between 0.1 units
-    // and 100 units away from the camera.
-
-    gl.useProgram(figureInfo.programInfo.program);
-
-    const fieldOfView = 45 * Math.PI / 180;   // in radians
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const fieldOfView = 45 * Math.PI / 180;
+    const aspect = gl.getParameter(gl.VIEWPORT)[2] / gl.getParameter(gl.VIEWPORT)[3];
+    // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
-    const projectionMatrix = mat4.create();
 
+    const projectionMatrix = mat4.create();
     mat4.perspective(
         projectionMatrix,
         fieldOfView,
@@ -160,131 +102,74 @@ function drawFigure(gl, figureInfo) {
         zNear,
         zFar);
 
+    const viewMatrix = player_view();
+    const viewPosition = player_xyz();
+    const modelMatrix = figure_view(figure);
+
     const modelViewMatrix = mat4.create();
+    mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
 
-    mat4.rotate(
-        modelViewMatrix,
-        modelViewMatrix,
-        view_lon,
-        [0, 1, 0]);
-    mat4.rotate(
-        modelViewMatrix,
-        modelViewMatrix,
-        view_lat,
-        [Math.cos(view_lon), 0, Math.sin(view_lon)]);
-    mat4.translate(
-        modelViewMatrix,
-        modelViewMatrix,
-        [x, y, z]);
-    if (figureInfo.rotation) {
-        mat4.rotate(
-            modelViewMatrix,
-            modelViewMatrix,
-            figureInfo.rotation.angle,
-            figureInfo.rotation.vec);
-    }
 
-    {
-        const numComponents = 3;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.position);
+    figure.buffers.attributes.forEach((attr) => {
+        gl.bindBuffer(gl.ARRAY_BUFFER, figure.buffers[attr.bufferName]);
         gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.vertexPosition,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
+            figure.programInfo.attribLocations[attr.vertexAttributeName],
+            attr.numComponents,
+            attr.type,
+            attr.normalize,
+            attr.stride,
+            attr.offset);
         gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.vertexPosition);
-    }
+            figure.programInfo.attribLocations[attr.vertexAttributeName]);
+    });
 
-    if ("texture" in figureInfo) {
-        const numComponents = 2;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.texture);
-        gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.textureCoord,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.textureCoord);
-    } else {
-        // console.log("No text")
-        const numComponents = 4;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.color);
-        gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.vertexColor,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.vertexColor);
-    }
-
-    {
-        const numComponents = 3;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, figureInfo.buffers.normal);
-        gl.vertexAttribPointer(
-            figureInfo.programInfo.attribLocations.vertexNormal,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            figureInfo.programInfo.attribLocations.vertexNormal);
-    }
-
-
-    {
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, figureInfo.buffers.indices);
-    }
-
-    const normalMatrix = mat4.create();
-    mat4.invert(normalMatrix, modelViewMatrix);
-    mat4.transpose(normalMatrix, normalMatrix);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, figure.buffers.indices);
 
     gl.uniformMatrix4fv(
-        figureInfo.programInfo.uniformLocations.normalMatrix,
-        false,
-        normalMatrix);
-    gl.uniformMatrix4fv(
-        figureInfo.programInfo.uniformLocations.projectionMatrix,
+        figure.programInfo.uniformLocations.projectionMatrix,
         false,
         projectionMatrix);
+    // gl.uniformMatrix4fv(
+    //     figure.programInfo.uniformLocations.viewMatrix,
+    //     false,
+    //     viewMatrix);
     gl.uniformMatrix4fv(
-        figureInfo.programInfo.uniformLocations.modelViewMatrix,
+        figure.programInfo.uniformLocations.modelMatrix,
+        false,
+        modelMatrix);
+    gl.uniformMatrix4fv(
+        figure.programInfo.uniformLocations.modelViewMatrix,
         false,
         modelViewMatrix);
+    gl.uniform3fv(
+        figure.programInfo.uniformLocations.viewPosition,
+        viewPosition);
 
-    if ("texture" in figureInfo) {
+    let figure_intensity = 1;
+    const time_sec = new Date().getTime() / 1000.0;
+    if (figure.intensity) {
+        figure_intensity = figure.intensity.mean + figure.intensity.scale * Math.sin(2 * Math.PI * time_sec / figure.intensity.period);
+    }
+
+    gl.uniform1f(
+        figure.programInfo.uniformLocations.uIntensity,
+        figure_intensity);
+    gl.uniform1f(
+        figure.programInfo.uniformLocations.uTime,
+        time_sec);
+
+    // gl.uniform1f(
+    //     figure.programInfo.uniformLocations.uScale,
+    //     sec2);
+
+    if ("texture" in figure) {
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, figureInfo.texture);
-        gl.uniform1i(figureInfo.programInfo.uniformLocations.uSampler, 0);
+        gl.bindTexture(gl.TEXTURE_2D, figure.texture);
+        gl.uniform1i(figure.programInfo.uniformLocations.uSampler, 0);
     }
 
     {
-        const vertexCount = figureInfo.buffers.numVertices;
+        const vertexCount = figure.buffers.numVertices;
         const type = gl.UNSIGNED_SHORT;
         const offset = 0;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);

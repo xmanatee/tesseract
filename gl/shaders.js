@@ -1,65 +1,104 @@
 // Vertex shader program
 const vertexShader = `
-    attribute vec4 aVertexPosition;
+    attribute vec3 aVertexPosition;
     attribute vec3 aVertexNormal;
     attribute vec4 aVertexColor;
     attribute vec2 aTextureCoord;
     
-    uniform mat4 uNormalMatrix;
+    // uniform mat4 uViewMatrix;
+    // uniform vec3 uViewPosition;
+    // uniform float uScale;
+    uniform mat4 uModelMatrix;
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
     
-    varying lowp vec4 vColor;
-    varying highp vec3 vLighting;
+    varying highp vec3 vVertexNormal;
+    varying highp vec3 vVertexPosition;
     varying highp vec2 vTextureCoord;
-    
+
     void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-        vColor = aVertexColor;
+        highp vec3 vertexPosition = aVertexPosition;
+        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(vertexPosition, 1); // * vec4(uScale, uScale, uScale, 1);
         
-        highp vec3 ambientLight = vec3(0.3, 0.3, 0.0);
-        highp vec3 directionalLightColor = vec3(0.9, 0.3, 0.4);
-        highp vec3 directionalVector = normalize(vec3(1, 0.5, 0.75));
-
-        highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-
-        highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-        vLighting = ambientLight + (directionalLightColor * directional);
         vTextureCoord = aTextureCoord;
+        vVertexNormal = mat3(uModelMatrix) * aVertexNormal;
+        vVertexPosition = vertexPosition;
     }
 `;
 
 // Fragment shader program
 const textureFragmentShader = `
-    // varying lowp vec4 vColor;
-    varying highp vec3 vLighting;
+
+    varying highp vec3 vVertexNormal;
+    varying highp vec3 vVertexPosition;
     varying highp vec2 vTextureCoord;
     
     uniform sampler2D uSampler;
-
-    void main() {
-        // highp vec4 texelColor = vColor;
-        highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
-        
-        gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
-    }
-`;
-
-// Fragment shader program
-const colorFragmentShader = `
-    varying lowp vec4 vColor;
-    varying highp vec3 vLighting;
-    varying highp vec2 vTextureCoord;
+    uniform highp vec3 uViewPosition;
+    uniform highp float uIntensity;
+    uniform highp float uTime;
     
-    uniform sampler2D uSampler;
+    // Lighting constants:
+    const highp vec3 ambientLight = vec3(0.1, 0.1, 0.1);
+    // struct PointLight {
+    //     highp vec3 color;
+    //     highp vec3 pos;
+    // };
+    // const PointLight l[1] = PointLight[1](
+    //     PointLight(
+    //         vec3(0.8, 0.2, 0.0),
+    //         -100.0 * vec3(0.75, 0.3, 0.6)
+    //     )
+    // );
+    const highp vec3 lightColor_1 = vec3(0.8, 0.2, 0.0);
+    const highp vec3 lightColor_2 = vec3(0, 0.2, 0.8);
+    const highp vec3 lightPos_1 = -100.0 * vec3(0.75, 0.3, 0.6);
+    const highp vec3 lightPos_2 = -100.0 * vec3(-1, -0.5, 0);
+    const highp float specularStrength = 0.75;
+    const highp float specularShininess = 256.0;
 
     void main() {
-        highp vec4 texelColor = vColor;
-        // highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
+        highp vec3 pulsation_vec = vec3(uIntensity, 1, 1);
+        highp vec4 color = texture2D(uSampler, vTextureCoord);
+ 
+        highp vec3 lightDir_1 = normalize(lightPos_1 - vVertexPosition);
+        highp vec3 lightDir_2 = normalize(lightPos_2 - vVertexPosition);
+        highp vec3 viewDir = normalize(uViewPosition - vVertexPosition);
+        highp vec3 reflectLightDir_1 = reflect(-lightDir_1, vVertexNormal);
+        highp vec3 reflectLightDir_2 = reflect(-lightDir_2, vVertexNormal);
+
+        highp vec3 diffuseLight_1 = lightColor_1 * max(dot(vVertexNormal, lightDir_1), 0.0);
+        highp vec3 diffuseLight_2 = lightColor_2 * max(dot(vVertexNormal, lightDir_2), 0.0);
+
+        highp float lightSpec_1 = pow(max(dot(viewDir, reflectLightDir_1), 0.0), specularShininess);
+        highp vec3 specularLight_1 = specularStrength * lightSpec_1 * lightColor_1;
+
+        highp float lightSpec_2 = pow(max(dot(viewDir, reflectLightDir_2), 0.0), specularShininess);
+        highp vec3 specularLight_2 = specularStrength * lightSpec_2 * lightColor_2;
         
-        gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+        highp vec3 lighting = ambientLight
+            + diffuseLight_1
+            + diffuseLight_2
+            + specularLight_1
+            + specularLight_2;
+        
+        gl_FragColor = vec4(pulsation_vec * color.rgb * lighting, color.a);
+        // gl_FragColor = vec4(vVertexNormal, 1);
+        
     }
 `;
+
+// // Fragment shader program
+// const colorFragmentShader = `
+//     varying lowp vec4 vColor;
+//     varying highp vec3 vLighting;
+//
+//     void main() {
+//         highp vec4 texelColor = vColor;
+//
+//         gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+//     }
+// `;
 
 
 function initShaderProgram(gl, vsSource, fsSource) {
