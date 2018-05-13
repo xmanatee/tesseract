@@ -21,6 +21,7 @@ function startGame(gl) {
     init_programs(gl);
 
     const figures = build_figures(gl, figuresConfig);
+    console.log(figures);
 
     document.getElementById("easter_btn").onclick = () => {
         figures[3].on = !figures[3].on;
@@ -32,8 +33,15 @@ function startGame(gl) {
 
     key_triggers["r"] = () => {
         figures.forEach((figure) => {
-            if (figure === "thor4d") {
-                // new_figures
+            if (figure.id === "thor4d") {
+                figure.surface.plane_base[0] += 0.1;
+                const mesh = mesh_from_surface(
+                    figure.surface_instance,
+                    figure.surface.det,
+                    figure.surface.plane,
+                    figure.surface.plane_base
+                );
+                figure.buffers = init_buffers(gl, mesh);
             }
         })
     };

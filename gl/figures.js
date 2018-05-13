@@ -25,7 +25,13 @@ const figuresConfig = [
             type: "thor4d",
             params: [10, 5.25, 3],
             det: [20, 20, 20],
-            // det: [5, 5, 5],
+            plane: [
+                [0.5, 0.5, -0.5, -0.5],
+                [0.5, -0.5, 0.5, -0.5],
+                [0.5, -0.5, -0.5, 0.5],
+                [0.5, 0.5, 0.5, 0.5],
+            ],
+            plane_base: [0, 0, 0, 0],
         },
         intensity: {
             mean: 2.5,
@@ -141,7 +147,14 @@ function build_figures(gl, figs_config) {
                 surface_type = Sphere;
             }
             const surface = new surface_type(...fig_config.surface.params);
-            mesh = mesh_from_surface(surface, fig_config.surface.det);
+            figure.surface = fig_config.surface;
+            figure.surface_instance = surface;
+            mesh = mesh_from_surface(
+                surface,
+                fig_config.surface.det,
+                fig_config.surface.plane,
+                fig_config.surface.plane_base
+            );
         }
 
         figure.buffers = init_buffers(gl, mesh);
