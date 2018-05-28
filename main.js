@@ -69,7 +69,7 @@ window.onload = function() {
         easter_state = !easter_state;
         easter_div.style.display = easter_state ? "block" : "none";
     };
-    key_itriggers["v"] = loveEasterCallback;
+    key_itriggers["n"] = loveEasterCallback;
 
     load_meshes(obj_paths, () => {
         startGame(gl);
