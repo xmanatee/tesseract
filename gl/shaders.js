@@ -44,18 +44,15 @@ const textureFragmentShader = `
     //     highp vec3 color;
     //     highp vec3 pos;
     // };
-    // const PointLight l[1] = PointLight[1](
-    //     PointLight(
-    //         vec3(0.8, 0.2, 0.0),
-    //         -100.0 * vec3(0.75, 0.3, 0.6)
-    //     )
-    // );
-    const highp vec3 lightColor_1 = vec3(0.8, 0.2, 0.0);
-    const highp vec3 lightColor_2 = vec3(0, 0.2, 0.8);
+    const highp vec3 lightColor_1 = 1.3 * vec3(0.8, 0.2, 0.0);
+    const highp vec3 lightColor_2 = 1.3 * vec3(0, 0.2, 0.8);
     const highp vec3 lightPos_1 = -100.0 * vec3(0.75, 0.3, 0.6);
     const highp vec3 lightPos_2 = -100.0 * vec3(-1, -0.5, 0);
     const highp float specularStrength = 0.75;
-    const highp float specularShininess = 256.0;
+    const highp float specularShininess = 150.0;
+
+    const highp float numTones = 7.0;
+    const highp float borderRadius = 0.17;
 
     void main() {
         highp vec3 pulsation_vec = vec3(uIntensity, 1, 1);
@@ -82,9 +79,19 @@ const textureFragmentShader = `
             + specularLight_1
             + specularLight_2;
         
-        gl_FragColor = vec4(pulsation_vec * color.rgb * lighting, color.a);
-        // gl_FragColor = vec4(vVertexNormal, 1);
+        highp vec4 preFinalColor = vec4(pulsation_vec * color.rgb * lighting, color.a);
+        highp vec4 finalToonColor;
+        finalToonColor.r = floor(preFinalColor.r * numTones) / numTones;
+        finalToonColor.g = floor(preFinalColor.g * numTones) / numTones;
+        finalToonColor.b = floor(preFinalColor.b * numTones) / numTones;
+        finalToonColor.a = floor(preFinalColor.a * numTones) / numTones;
         
+        if (length(finalToonColor - preFinalColor) > borderRadius) {
+            gl_FragColor = vec4(0, 0, 0, 1);
+        } else {
+            gl_FragColor = finalToonColor;
+        }
+        // gl_FragColor = vec4(vVertexNormal, 1);        
     }
 `;
 

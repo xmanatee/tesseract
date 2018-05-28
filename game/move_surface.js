@@ -15,7 +15,7 @@ let lon_velocity = 0;
 let view_lat = -0.20;
 let view_lon = Math.PI / 2;
 
-const MAX_VELOCITY = 5.0;
+const MAX_VELOCITY = 10.0;
 let stright_velocity = 0;
 let side_velocity = 0;
 

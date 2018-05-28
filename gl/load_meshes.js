@@ -39,6 +39,7 @@ const obj_paths = [
     // "objs/lamp.obj",
     // "objs/mp412.obj",
     "resources/objs/naruto.obj",
+    // "resources/objs/penis.obj",
     // "objs/stickman.obj",
     // "objs/suzanne.obj",
     // "objs/suzanne_2.obj",

@@ -24,7 +24,7 @@ const figuresConfig = [
         surface: {
             type: "thor4d",
             params: [10, 5.25, 3],
-            det: [20, 20, 20],
+            det: [10, 10, 10],
             plane: [
                 [0.5, 0.5, -0.5, -0.5],
                 [0.5, -0.5, 0.5, -0.5],
@@ -34,9 +34,9 @@ const figuresConfig = [
             plane_base: [0, 0, 0, 0],
         },
         intensity: {
-            mean: 2.5,
-            scale: 1.5,
-            period: 4.0,
+            mean: 3.5,
+            scale: 1.0,
+            period: 3.0,
         },
         on: true,
         texture_url: "resources/textures/Lava_001_COLOR.png",
@@ -47,7 +47,7 @@ const figuresConfig = [
         surface: {
             type: "sphere",
             params: [40],
-            det: [100, 100],
+            det: [200, 200],
         },
         on: true,
         rotation: {

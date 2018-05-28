@@ -43,18 +43,33 @@ window.onload = function() {
     tryFixSize(gl);
 
     canvas.ondblclick = () => {
-        if (extra_div.style.display === "none") {
-            extra_div.style.display = "block";
-        } else {
-            requestFullscreen(canvas);
-            requestPointerLock(canvas);
-        }
+        requestFullscreen(canvas);
+        requestPointerLock(canvas);
     };
-    document.getElementById("pointerlock_btn").onclick = () => { requestPointerLock(canvas); };
 
-    document.getElementById("hide_btn").onclick = () => {
-        extra_div.style.display = "none";
+    const fullscreenCallback = () => { requestFullscreen(canvas); };
+    document.getElementById("fullscreen_btn").onclick = fullscreenCallback;
+    key_itriggers["f"] = fullscreenCallback;
+
+    const pointerLockCallback = () => { requestPointerLock(canvas); };
+    document.getElementById("pointerlock_btn").onclick = pointerLockCallback;
+    key_itriggers["m"] = pointerLockCallback;
+
+    let extra_state = true;
+    const hideControlCallback = () => {
+        extra_state = !extra_state;
+        extra_div.style.display = extra_state ? "block" : "none";
     };
+    document.getElementById("hide_btn").onclick = hideControlCallback;
+    key_itriggers["h"] = hideControlCallback;
+
+    const easter_div = document.getElementById("love_easter");
+    let easter_state = false;
+    const loveEasterCallback = () => {
+        easter_state = !easter_state;
+        easter_div.style.display = easter_state ? "block" : "none";
+    };
+    key_itriggers["v"] = loveEasterCallback;
 
     load_meshes(obj_paths, () => {
         startGame(gl);

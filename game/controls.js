@@ -1,4 +1,5 @@
 let key_triggers = {};
+let key_itriggers = {};
 
 // function glKeyPressedListener(event){
 //     event = event || window.event;
@@ -11,6 +12,10 @@ function glKeyDownListener(event) {
     event = event || window.event;
     let key = event.key || event.which || event.key;
     keys.add(key);
+
+    if (key in key_itriggers) {
+        key_itriggers[key]();
+    }
 }
 
 function glKeyUpListener(event) {

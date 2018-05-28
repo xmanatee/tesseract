@@ -17,24 +17,44 @@ function startGame(gl) {
     init_game_surface();
 
     // const player = new Player(-10, 0, 0, 0, key_triggers);
-
     init_programs(gl);
 
     const figures = build_figures(gl, figuresConfig);
-    console.log(figures);
 
-    document.getElementById("easter_btn").onclick = () => {
+    const easterCallback = () => {
         figures[3].on = !figures[3].on;
         figures[4].on = !figures[4].on;
     };
-    document.getElementById("binocular_btn").onclick = () => {
+    document.getElementById("easter_btn").onclick = easterCallback;
+    key_itriggers["e"] = easterCallback;
+
+
+    const binocularCallback = () => {
         binocular = !binocular;
     };
+    document.getElementById("binocular_btn").onclick = binocularCallback;
+    key_itriggers["b"] = binocularCallback;
 
+    let plane_rotation_f = 0;
+    let plane_rotation_s = 1;
+    const plane_rotation_angle = 0.1;
+    key_itriggers["t"] = () => {
+        plane_rotation_f = (plane_rotation_f + 1) % 4;
+        plane_rotation_s = (plane_rotation_s + 1) % 4;
+    };
     key_triggers["r"] = () => {
         figures.forEach((figure) => {
             if (figure.id === "thor4d") {
-                figure.surface.plane_base[0] += 0.1;
+                let cosa = Math.cos(plane_rotation_angle);
+                let sina = Math.sin(plane_rotation_angle);
+
+                for (let i = 0; i < 4; ++i) {
+                    const a = figure.surface.plane[i][plane_rotation_f];
+                    const b = figure.surface.plane[i][plane_rotation_s];
+                    figure.surface.plane[i][plane_rotation_f] = a * cosa + b * sina;
+                    figure.surface.plane[i][plane_rotation_s] = -a * sina + b * cosa;
+                }
+
                 const mesh = mesh_from_surface(
                     figure.surface_instance,
                     figure.surface.det,
@@ -45,6 +65,8 @@ function startGame(gl) {
             }
         })
     };
+
+    console.log(gl.fillText);
 
     Player(key_triggers);
 
