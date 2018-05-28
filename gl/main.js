@@ -122,7 +122,7 @@ function drawFigure(gl, figure) {
     const aspect = gl.getParameter(gl.VIEWPORT)[2] / gl.getParameter(gl.VIEWPORT)[3];
     // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
-    const zFar = 100.0;
+    const zFar = 400.0;
 
     const projectionMatrix = mat4.create();
     mat4.perspective(
