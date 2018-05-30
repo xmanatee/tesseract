@@ -111,6 +111,8 @@ function startGame(gl) {
             view_shift_right = 0;
         }
 
+        // forceRedraw(document.getElementById("extra_div"));
+
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);

@@ -15,8 +15,6 @@ function tryFixSize(gl) {
     }
 }
 
-
-
 function requestFullscreen(canvas) {
     canvas.requestFullScreen = canvas.requestFullScreen || canvas.webkitRequestFullScreen || canvas.mozRequestFullScreen;
     canvas.requestFullScreen();
@@ -28,6 +26,14 @@ function requestPointerLock(canvas) {
 }
 
 let fps_p = null;
+
+function forceRedraw(element){
+    const disp = element.style.display;
+    element.style.display = 'none';
+    const trick = element.offsetHeight;
+    element.style.display = disp;
+}
+
 
 window.onload = function() {
     const extra_div = document.getElementById("extra_div");
