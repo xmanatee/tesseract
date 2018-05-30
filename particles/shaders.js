@@ -39,8 +39,7 @@ const vs_transform_shader = `
         vec3 r = offset + u_magnet_center;
         float dist2surf = length(r) - MAGNET_RADIUS;
         vec3 vec2surf = dist2surf * r / length(r);
-        vec3 a = -normalize(vec2surf) * MAGNET_G * a_mass
-            * pow(dist2surf * 1000.0, 2.0)
+        vec3 a = -normalize(vec2surf) * MAGNET_G * a_mass * pow(dist2surf * 1000.0, 2.0)
             // * (exp(1.0 * length(dist2surf)) + exp(-1.0 * length(dist2surf)))
             + random3 * 2.9;
             ;
@@ -98,13 +97,13 @@ const vs_draw_shader = `
             cos_r, sin_r,
             -sin_r, cos_r
         );
-        gl_Position = vec4(vec3(rot * a_position * 2.0, 0.0) + offset, 1.0);
+        gl_Position = vec4(vec3(rot * a_position, 0.0) / length(offset4d) + offset, 1.0);
     }
 `.trim();
 
 const fs_draw_shader = `
         #version 300 es
-        #define ALPHA 0.6
+        #define ALPHA 0.7
 
         precision highp float;
         precision highp int;
