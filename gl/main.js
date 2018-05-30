@@ -20,6 +20,12 @@ function startGame(gl) {
     init_programs(gl);
 
     const figures = build_figures(gl, figuresConfig);
+    const particles = initParticles(gl, 10000);
+
+    key_triggers[" "] = () => {
+        particles.vars.is_pushed = true;
+    };
+
 
     const easterCallback = () => {
         figures[3].on = !figures[3].on;
@@ -27,7 +33,6 @@ function startGame(gl) {
     };
     document.getElementById("easter_btn").onclick = easterCallback;
     key_itriggers["e"] = easterCallback;
-
 
     const binocularCallback = () => {
         binocular = !binocular;
@@ -66,8 +71,6 @@ function startGame(gl) {
         })
     };
 
-    console.log(gl.fillText);
-
     Player(key_triggers);
 
     let then = 0;
@@ -90,19 +93,24 @@ function startGame(gl) {
 
         tryFixSize(gl);
         clearDrawBuffers(gl);
+        particles.f.transform();
         if (!binocular) {
             gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
             drawScene(gl, figures);
+            particles.f.draw();
         } else {
             const half_width = gl.drawingBufferWidth / 2;
             view_shift_right = 0.1;
             gl.viewport(0, 0, half_width, gl.drawingBufferHeight);
             drawScene(gl, figures);
+            particles.f.draw();
             view_shift_right = -0.1;
             gl.viewport(half_width, 0, half_width, gl.drawingBufferHeight);
             drawScene(gl, figures);
+            particles.f.draw();
             view_shift_right = 0;
         }
+
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
@@ -113,95 +121,4 @@ function drawScene(gl, figures) {
     figures.filter(figure => figure.on).forEach((figure) => {
         drawFigure(gl, figure);
     })
-}
-
-function drawFigure(gl, figure) {
-    gl.useProgram(figure.programInfo.program);
-
-    const fieldOfView = 45 * Math.PI / 180;
-    const aspect = gl.getParameter(gl.VIEWPORT)[2] / gl.getParameter(gl.VIEWPORT)[3];
-    // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 400.0;
-
-    const projectionMatrix = mat4.create();
-    mat4.perspective(
-        projectionMatrix,
-        fieldOfView,
-        aspect,
-        zNear,
-        zFar);
-
-    const viewMatrix = player_view();
-    const viewPosition = player_xyz();
-    const modelMatrix = figure_view(figure);
-
-    const modelViewMatrix = mat4.create();
-    mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
-
-
-    figure.buffers.attributes.forEach((attr) => {
-        gl.bindBuffer(gl.ARRAY_BUFFER, figure.buffers[attr.bufferName]);
-        gl.vertexAttribPointer(
-            figure.programInfo.attribLocations[attr.vertexAttributeName],
-            attr.numComponents,
-            attr.type,
-            attr.normalize,
-            attr.stride,
-            attr.offset);
-        gl.enableVertexAttribArray(
-            figure.programInfo.attribLocations[attr.vertexAttributeName]);
-    });
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, figure.buffers.indices);
-
-    gl.uniformMatrix4fv(
-        figure.programInfo.uniformLocations.projectionMatrix,
-        false,
-        projectionMatrix);
-    // gl.uniformMatrix4fv(
-    //     figure.programInfo.uniformLocations.viewMatrix,
-    //     false,
-    //     viewMatrix);
-    gl.uniformMatrix4fv(
-        figure.programInfo.uniformLocations.modelMatrix,
-        false,
-        modelMatrix);
-    gl.uniformMatrix4fv(
-        figure.programInfo.uniformLocations.modelViewMatrix,
-        false,
-        modelViewMatrix);
-    gl.uniform3fv(
-        figure.programInfo.uniformLocations.viewPosition,
-        viewPosition);
-
-    let figure_intensity = 1;
-    const time_sec = new Date().getTime() / 1000.0;
-    if (figure.intensity) {
-        figure_intensity = figure.intensity.mean + figure.intensity.scale * Math.sin(2 * Math.PI * time_sec / figure.intensity.period);
-    }
-
-    gl.uniform1f(
-        figure.programInfo.uniformLocations.uIntensity,
-        figure_intensity);
-    gl.uniform1f(
-        figure.programInfo.uniformLocations.uTime,
-        time_sec);
-
-    // gl.uniform1f(
-    //     figure.programInfo.uniformLocations.uScale,
-    //     sec2);
-
-    if ("texture" in figure) {
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, figure.texture);
-        gl.uniform1i(figure.programInfo.uniformLocations.uSampler, 0);
-    }
-
-    {
-        const vertexCount = figure.buffers.numVertices;
-        const type = gl.UNSIGNED_SHORT;
-        const offset = 0;
-        gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-    }
 }

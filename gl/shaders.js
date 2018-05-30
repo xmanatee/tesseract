@@ -24,7 +24,7 @@ const vertexShader = `
         vVertexNormal = mat3(uModelMatrix) * aVertexNormal;
         vVertexPosition = vertexPosition;
     }
-`;
+`.trim();
 
 // Fragment shader program
 const textureFragmentShader = `
@@ -44,8 +44,8 @@ const textureFragmentShader = `
     //     highp vec3 color;
     //     highp vec3 pos;
     // };
-    const highp vec3 lightColor_1 = 1.3 * vec3(0.8, 0.2, 0.0);
-    const highp vec3 lightColor_2 = 1.3 * vec3(0, 0.2, 0.8);
+    const highp vec3 lightColor_1 = 2.3 * vec3(0.8, 0.2, 0.0);
+    const highp vec3 lightColor_2 = 2.3 * vec3(0, 0.2, 0.8);
     const highp vec3 lightPos_1 = -100.0 * vec3(0.75, 0.3, 0.6);
     const highp vec3 lightPos_2 = -100.0 * vec3(-1, -0.5, 0);
     const highp float specularStrength = 0.75;
@@ -93,7 +93,7 @@ const textureFragmentShader = `
         }
         // gl_FragColor = vec4(vVertexNormal, 1);        
     }
-`;
+`.trim();
 
 // // Fragment shader program
 // const colorFragmentShader = `
@@ -105,7 +105,7 @@ const textureFragmentShader = `
 //
 //         gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
 //     }
-// `;
+// `.trim();
 
 
 function initShaderProgram(gl, vsSource, fsSource) {

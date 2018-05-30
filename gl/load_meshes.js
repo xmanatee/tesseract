@@ -29,6 +29,7 @@ const obj_paths = [
     // "objs/dog.obj",
     // "objs/female.obj",
     "resources/objs/flash.obj",
+    "resources/objs/hand/hand.obj",
     // "objs/heart.obj",
     // "objs/helicopter.obj",
     // "objs/hp.obj", // too big

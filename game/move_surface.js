@@ -12,10 +12,12 @@ const MAX_LAT = Math.PI * 3 / 7;
 let lat_velocity = 0;
 let lon_velocity = 0;
 
-let view_lat = -0.20;
+// let view_lat = -0.20;
+// let view_lon = Math.PI / 2;
+let view_lat = 0;
 let view_lon = Math.PI / 2;
 
-const MAX_VELOCITY = 10.0;
+const MAX_VELOCITY = 3.0;
 let stright_velocity = 0;
 let side_velocity = 0;
 
@@ -79,6 +81,10 @@ function player_xyz() {
     return vec(game_surface.xyz(u, v));
 }
 
+let new_up = [0, 0, 0];
+let new_right = [0, 0, 0];
+let new_forward = [0, 0, 0];
+
 function player_view() {
     const forward = vec(game_surface.du(u, v));
     const up = vec(game_surface.nxyz(u, v));
@@ -105,7 +111,9 @@ function player_view() {
         up);
 
     vec3.scaleAndAdd(view_shift, view_shift, up, view_shift_up);
-    const new_right = [viewMatrix[0], viewMatrix[4], viewMatrix[8]];
+    new_right = [viewMatrix[0], viewMatrix[4], viewMatrix[8]];
+    new_up = [viewMatrix[1], viewMatrix[5], viewMatrix[9]];
+    new_forward = [viewMatrix[2], viewMatrix[6], viewMatrix[10]];
     vec3.scaleAndAdd(view_shift, view_shift, new_right, view_shift_right);
 
     mat4.translate(

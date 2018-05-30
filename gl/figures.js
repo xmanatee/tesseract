@@ -25,11 +25,17 @@ const figuresConfig = [
             type: "thor4d",
             params: [10, 5.25, 3],
             det: [10, 10, 10],
+            // plane: [
+            //     [0.5, 0.5, -0.5, -0.5],
+            //     [0.5, -0.5, 0.5, -0.5],
+            //     [0.5, -0.5, -0.5, 0.5],
+            //     [0.5, 0.5, 0.5, 0.5],
+            // ],
             plane: [
-                [0.5, 0.5, -0.5, -0.5],
-                [0.5, -0.5, 0.5, -0.5],
-                [0.5, -0.5, -0.5, 0.5],
-                [0.5, 0.5, 0.5, 0.5],
+                [-0.2655017212625049, -0.32561684101612254, -0.42738505389211257, -0.8005151619819302],
+                [0.5346068036522923, 0.7334102640848212, -0.2118175608212149, -0.36254416413928103],
+                [-0.7947356743813667, 0.5933143317483519, 0.12078623129127208, -0.042237399754749536],
+                [0.10999822435346986, -0.06372724004460116, 0.8705664954314646, -0.4753453550288956],
             ],
             plane_base: [0, 0, 0, 0],
         },
@@ -47,7 +53,7 @@ const figuresConfig = [
         surface: {
             type: "sphere",
             params: [40],
-            det: [200, 200],
+            det: [100, 100],
         },
         on: true,
         rotation: {
@@ -76,7 +82,7 @@ const figuresConfig = [
         program_id: "textured",
         obj: {
             name: "naruto",
-            scale: 1,
+            scale: 1.0,
         },
         on: true,
         rotation: {
@@ -112,6 +118,38 @@ const figuresConfig = [
         //     vec: [0, -0.15, -0.5],
         // },
         texture_url: "resources/textures/FL_CW_A_1.png",
+    },
+    {
+        id: "hand",
+        program_id: "textured",
+        obj: {
+            name: "hand",
+            scale: 0.08,
+        },
+        on: true,
+        relative: true,
+        start_rotation: [
+            {
+                angle: -0.5 * Math.PI,
+                vec: [1, 0, 0],
+            },
+            {
+                angle: -0.8 * Math.PI,
+                vec: [0, 1, 0],
+            },
+            {
+                angle: -0.1 * Math.PI,
+                vec: [0, 0, 1],
+            },
+            {
+                angle: 0.05 * Math.PI,
+                vec: [1, 0, 0],
+            },
+        ],
+        start_translation: {
+            vec: [-0.07, -0.035, -0.2],
+        },
+        texture_url: "resources/objs/hand/hand.png",
     },
 ];
 
@@ -187,11 +225,21 @@ function figure_view(figure) {
             figure.start_translation.vec);
     }
     if (figure.start_rotation) {
-        mat4.rotate(
-            modelMatrix,
-            modelMatrix,
-            figure.start_rotation.angle,
-            figure.start_rotation.vec);
+        if (figure.start_rotation instanceof Array) {
+            for (let i = 0; i < figure.start_rotation.length; ++i) {
+                mat4.rotate(
+                    modelMatrix,
+                    modelMatrix,
+                    figure.start_rotation[i].angle,
+                    figure.start_rotation[i].vec);
+            }
+        } else {
+            mat4.rotate(
+                modelMatrix,
+                modelMatrix,
+                figure.start_rotation.angle,
+                figure.start_rotation.vec);
+        }
     }
 
     return modelMatrix;
