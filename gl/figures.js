@@ -124,7 +124,7 @@ const figuresConfig = [
         program_id: "textured",
         obj: {
             name: "hand",
-            scale: 0.08,
+            scale: 0.07,
         },
         on: true,
         relative: true,
@@ -147,7 +147,7 @@ const figuresConfig = [
             },
         ],
         start_translation: {
-            vec: [-0.07, -0.035, -0.2],
+            vec: [-0.07, -0.035, -0.17],
         },
         texture_url: "resources/objs/hand/hand.png",
     },

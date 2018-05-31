@@ -5,7 +5,6 @@ body, #glcanvas {
     margin: 0;
     outline: 0;
     border: 0;
-    position: relative;
 }
 
 #glcanvas {

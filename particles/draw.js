@@ -18,8 +18,8 @@ function transformParticles(gl, particles, dtime) {
 
     let magnet_center = player_xyz();
     vec4.scaleAndAdd(magnet_center, magnet_center, new_forward, particles.vars.magnet_push);
-    vec4.scaleAndAdd(magnet_center, magnet_center, new_up, -0.45);
-    vec4.scaleAndAdd(magnet_center, magnet_center, new_right, 0.4);
+    vec4.scaleAndAdd(magnet_center, magnet_center, new_up, -0.40);
+    vec4.scaleAndAdd(magnet_center, magnet_center, new_right, 0.47);
     gl.uniform3f(particles.uniformLocations.magnetCenter, ...magnet_center);
 
     gl.bindVertexArray(sourceVAO);

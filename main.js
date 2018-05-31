@@ -27,15 +27,9 @@ function requestPointerLock(canvas) {
 
 let fps_p = null;
 
-function forceRedraw(element){
-    const disp = element.style.display;
-    element.style.display = 'none';
-    const trick = element.offsetHeight;
-    element.style.display = disp;
-}
-
 
 window.onload = function() {
+    const game_content = document.getElementById("game_container");
     const extra_div = document.getElementById("extra_div");
     const canvas = document.getElementById("glcanvas");
     fps_p = document.getElementById("fps_p");
@@ -49,7 +43,8 @@ window.onload = function() {
     tryFixSize(gl);
 
     canvas.ondblclick = () => {
-        requestFullscreen(canvas);
+        requestFullscreen(game_content);
+        //requestFullscreen(document);
         requestPointerLock(canvas);
     };
 
