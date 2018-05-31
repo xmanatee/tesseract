@@ -40,11 +40,11 @@ const vs_transform_shader = `
         vec3 r = offset + u_magnet_center;
         float dist2surf = length(r) - MAGNET_RADIUS;
         vec3 vec2surf = dist2surf * r / length(r);
-        vec3 force = -normalize(vec2surf) * MAGNET_G * pow(dist2surf, 0.4);
+        vec3 force = -normalize(vec2surf) * MAGNET_G * pow(0.01 + dist2surf, 0.4);
         vec3 a = force / a_mass;
         v_velocity = a_velocity + u_dtime * a;
 
-        v_velocity = (normalize(v_velocity) + random3 * pow(dist2surf, 0.3) * LIN_DISTURBANCE) * clamp(length(v_velocity), MIN_VELOCITY, MAX_VELOCITY); 
+        v_velocity = (normalize(v_velocity) + random3 * pow(0.03 + dist2surf, 0.3) * LIN_DISTURBANCE) * clamp(length(v_velocity), MIN_VELOCITY, MAX_VELOCITY); 
         v_offset = offset + u_dtime * v_velocity;
 
     }
