@@ -7,9 +7,9 @@ const vs_transform_shader = `
     #define MAGNET_G 0.6
     #define MAGNET_RADIUS 0.17
     
-    #define MIN_VELOCITY 0.0
+    #define MIN_VELOCITY 2.0
     #define MAX_VELOCITY 3.2
-    #define LIN_DISTURBANCE 0.12
+    #define LIN_DISTURBANCE 0.1
     
     precision highp float;
     precision highp int;
@@ -25,7 +25,7 @@ const vs_transform_shader = `
     out vec3 v_velocity;
     
     float rand(vec3 co){
-        return 2.0 * fract(sin(dot(co.xyz ,vec3(12.9898, 78.233, 48.1516))) * 43758.5453) - 1.0;
+        return 2.0 * fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 48.1516))) * 43758.5453) - 1.0;
     }
     
     void main()
@@ -40,11 +40,12 @@ const vs_transform_shader = `
         vec3 r = offset + u_magnet_center;
         float dist2surf = length(r) - MAGNET_RADIUS;
         vec3 vec2surf = dist2surf * r / length(r);
-        vec3 force = -normalize(vec2surf) * MAGNET_G * pow(0.01 + dist2surf, 0.4);
+        vec3 force = -normalize(vec2surf) * MAGNET_G * pow(abs(dist2surf), 0.4);
         vec3 a = force / a_mass;
         v_velocity = a_velocity + u_dtime * a;
 
-        v_velocity = (normalize(v_velocity) + random3 * pow(0.03 + dist2surf, 0.3) * LIN_DISTURBANCE) * clamp(length(v_velocity), MIN_VELOCITY, MAX_VELOCITY); 
+        v_velocity = (normalize(v_velocity) + random3 * pow(abs(dist2surf), 0.3) * LIN_DISTURBANCE)
+            * clamp(length(v_velocity), MIN_VELOCITY, MAX_VELOCITY); 
         v_offset = offset + u_dtime * v_velocity;
 
     }
