@@ -19,9 +19,9 @@ Cool shaders:
 Some work is still to be done:
 
 TODO:
-* add 4d rotation buttons
 * fix fullscreen mode
 * fix particles
+* fix 4d rotation buttons
 * shooting
 * webRtc p2p game
 * add position map on the screen
@@ -31,3 +31,4 @@ DONE:
 * turn Naruto
 * fix lighting
 * fix thor coloring
+* add 4d rotation buttons

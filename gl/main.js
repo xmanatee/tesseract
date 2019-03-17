@@ -42,12 +42,15 @@ function startGame(gl) {
 
     let plane_rotation_f = 0;
     let plane_rotation_s = 1;
-    const plane_rotation_angle = 0.1;
-    key_itriggers["t"] = () => {
+
+    const plane_rotation_angle = 0.07;
+
+    const changeAxis4dCallback = () => {
         plane_rotation_f = (plane_rotation_f + 1) % 4;
         plane_rotation_s = (plane_rotation_s + 1) % 4;
     };
-    key_triggers["r"] = () => {
+
+    const rotate4dCallback = () => {
         figures.forEach((figure) => {
             if (figure.id === "thor4d") {
                 let cosa = Math.cos(plane_rotation_angle);
@@ -70,6 +73,11 @@ function startGame(gl) {
             }
         })
     };
+
+    document.getElementById("change_axis_4d_btn").onclick = changeAxis4dCallback;
+    key_itriggers["t"] = changeAxis4dCallback;
+    document.getElementById("rotate_4d_btn").onclick = rotate4dCallback;
+    key_triggers["r"] = rotate4dCallback;
 
     Player(key_triggers);
 
