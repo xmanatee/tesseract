@@ -40,10 +40,6 @@ const textureFragmentShader = `
     
     // Lighting constants:
     const highp vec3 ambientLight = vec3(0.1, 0.1, 0.1);
-    // struct PointLight {
-    //     highp vec3 color;
-    //     highp vec3 pos;
-    // };
     const highp vec3 lightColor_1 = 2.3 * vec3(0.8, 0.2, 0.0);
     const highp vec3 lightColor_2 = 2.3 * vec3(0, 0.2, 0.8);
     const highp vec3 lightPos_1 = -100.0 * vec3(0.75, 0.3, 0.6);
@@ -52,7 +48,7 @@ const textureFragmentShader = `
     const highp float specularShininess = 150.0;
 
     const highp float numTones = 7.0;
-    const highp float borderRadius = 0.17;
+    const highp float borderRadius = 0.3;
 
     void main() {
         highp vec3 pulsation_vec = vec3(uIntensity, 1, 1);
