@@ -20,7 +20,7 @@ Some work is still to be done:
 
 TODO:
 * fix particles
-* fix 4d rotation buttons
+* fix 4d rotation buttons (make onpress("r") continuous)
 * shooting
 * webRtc p2p game
 * add position map on the screen

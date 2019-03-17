@@ -44,7 +44,6 @@ window.onload = function() {
 
     canvas.ondblclick = () => {
         requestFullscreen(game_content);
-        //requestFullscreen(document);
         requestPointerLock(canvas);
     };
 
@@ -64,12 +63,12 @@ window.onload = function() {
     document.getElementById("hide_btn").onclick = hideControlCallback;
     key_itriggers["h"] = hideControlCallback;
 
-    const easter_div = document.getElementById("love_easter");
     let easter_state = false;
     const loveEasterCallback = () => {
         easter_state = !easter_state;
-        easter_div.style.display = easter_state ? "block" : "none";
+        document.getElementById("love_easter").style.display = easter_state ? "block" : "none";
     };
+    key_itriggers["n"] = loveEasterCallback;
 
     let debug_toggle_state = false;
     const toggleDebugCallback = () => {
