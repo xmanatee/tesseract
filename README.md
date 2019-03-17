@@ -19,7 +19,6 @@ Cool shaders:
 Some work is still to be done:
 
 TODO:
-* fix fullscreen mode
 * fix particles
 * fix 4d rotation buttons
 * shooting
@@ -33,3 +32,4 @@ DONE:
 * fix thor coloring
 * add 4d rotation buttons
 * settings toggler
+* fix fullscreen mode

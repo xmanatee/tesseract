@@ -48,7 +48,7 @@ window.onload = function() {
         requestPointerLock(canvas);
     };
 
-    const fullscreenCallback = () => { requestFullscreen(canvas); };
+    const fullscreenCallback = () => { requestFullscreen(game_content); };
     document.getElementById("fullscreen_btn").onclick = fullscreenCallback;
     key_itriggers["f"] = fullscreenCallback;
 
