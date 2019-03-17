@@ -27,7 +27,7 @@ const vertexShader = `
 `.trim();
 
 // Fragment shader program
-const textureFragmentShader = `
+const fragmentShader = `
 
     varying highp vec3 vVertexNormal;
     varying highp vec3 vVertexPosition;
@@ -40,10 +40,11 @@ const textureFragmentShader = `
     
     // Lighting constants:
     const highp vec3 ambientLight = vec3(0.1, 0.1, 0.1);
-    const highp vec3 lightColor_1 = 2.3 * vec3(0.8, 0.2, 0.0);
-    const highp vec3 lightColor_2 = 2.3 * vec3(0, 0.2, 0.8);
     const highp vec3 lightPos_1 = -100.0 * vec3(0.75, 0.3, 0.6);
+    const highp vec3 lightColor_1 = 2.3 * vec3(0.8, 0.2, 0.0);
+
     const highp vec3 lightPos_2 = -100.0 * vec3(-1, -0.5, 0);
+    const highp vec3 lightColor_2 = 2.3 * vec3(0, 0.2, 0.8);
     const highp float specularStrength = 0.75;
     const highp float specularShininess = 150.0;
 

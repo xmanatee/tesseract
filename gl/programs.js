@@ -23,7 +23,7 @@ function init_programs(gl) {
     //     },
     // };
 
-    let shaderProgram = initShaderProgram(gl, vertexShader, textureFragmentShader);
+    let shaderProgram = initShaderProgram(gl, vertexShader, fragmentShader);
     programs.textured = {
         program: shaderProgram,
         attribLocations: {

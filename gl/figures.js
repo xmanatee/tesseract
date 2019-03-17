@@ -25,12 +25,6 @@ const figuresConfig = [
             type: "thor4d",
             params: [10, 5.25, 3],
             det: [10, 10, 10],
-            // plane: [
-            //     [0.5, 0.5, -0.5, -0.5],
-            //     [0.5, -0.5, 0.5, -0.5],
-            //     [0.5, -0.5, -0.5, 0.5],
-            //     [0.5, 0.5, 0.5, 0.5],
-            // ],
             plane: [
                 [-0.2655017212625049, -0.32561684101612254, -0.42738505389211257, -0.8005151619819302],
                 [0.5346068036522923, 0.7334102640848212, -0.2118175608212149, -0.36254416413928103],
@@ -82,17 +76,13 @@ const figuresConfig = [
         program_id: "textured",
         obj: {
             name: "naruto",
-            scale: 1.0,
+            // scale: 1.0,
         },
         on: true,
         rotation: {
             angle: 0,
-            vec: [0, 1, 0],
-            speed: 0.5,
-        },
-        start_rotation: {
-            angle: -0.5 * Math.PI,
-            vec: [1, 0, 0],
+            vec: [0, 0, 1],
+            speed: 0.3,
         },
         texture_url: "resources/textures/naruto_1.png",
     },
@@ -105,15 +95,15 @@ const figuresConfig = [
         },
         rotation: {
             angle: 0,
-            vec: [0, 1, 0],
-            speed: 0.5,
+            vec: [0, 0, 1],
+            speed: 0.3,
         },
         on: false,
         // relative: true,
-        // start_rotation: {
-        //     angle: -3,
-        //     vec: [0, 1, 0],
-        // },
+        start_rotation: {
+            angle: 0.5 * Math.PI,
+            vec: [1, 0, 0],
+        },
         // start_translation: {
         //     vec: [0, -0.15, -0.5],
         // },
