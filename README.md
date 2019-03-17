@@ -19,10 +19,8 @@ Cool shaders:
 Some work is still to be done:
 
 TODO:
-* fix lighting
-* fix thor coloring
 * add 4d rotation buttons
-* fix loading sign
+* fix fullscreen mode
 * fix particles
 * shooting
 * webRtc p2p game
@@ -31,3 +29,5 @@ TODO:
 
 DONE:
 * turn Naruto
+* fix lighting
+* fix thor coloring

@@ -2,7 +2,7 @@
 const figuresConfig = [
     // {
     //     id: "thor",
-    //     program_id: "textured",
+    //     program_id: "looney",
     //     surface: {
     //         type: "thor",
     //         params: [8, 5],
@@ -20,7 +20,7 @@ const figuresConfig = [
     // },
     {
         id: "thor4d",
-        program_id: "textured",
+        program_id: "rgbNormal",
         surface: {
             type: "thor4d",
             params: [10, 5.25, 3],
@@ -43,7 +43,7 @@ const figuresConfig = [
     },
     {
         id: "sphere",
-        program_id: "textured",
+        program_id: "globus",
         surface: {
             type: "sphere",
             params: [40],
@@ -59,7 +59,7 @@ const figuresConfig = [
     },
     {
         id: "cerberus",
-        program_id: "textured",
+        program_id: "looney",
         obj: {
             name: "cerberus",
             scale: 0.1,
@@ -73,7 +73,7 @@ const figuresConfig = [
     },
     {
         id: "naruto",
-        program_id: "textured",
+        program_id: "looney",
         obj: {
             name: "naruto",
             // scale: 1.0,
@@ -88,7 +88,7 @@ const figuresConfig = [
     },
     {
         id: "flash",
-        program_id: "textured",
+        program_id: "looney",
         obj: {
             name: "flash",
             // scale: 1,
@@ -111,7 +111,7 @@ const figuresConfig = [
     },
     {
         id: "hand",
-        program_id: "textured",
+        program_id: "looney",
         obj: {
             name: "hand",
             scale: 0.07,
