@@ -32,3 +32,4 @@ DONE:
 * fix lighting
 * fix thor coloring
 * add 4d rotation buttons
+* settings toggler

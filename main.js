@@ -70,7 +70,20 @@ window.onload = function() {
         easter_state = !easter_state;
         easter_div.style.display = easter_state ? "block" : "none";
     };
-    key_itriggers["n"] = loveEasterCallback;
+
+    let debug_toggle_state = false;
+    const toggleDebugCallback = () => {
+        debug_toggle_state = !debug_toggle_state;
+        if (debug_toggle_state) {
+            document.getElementById("debug_toggler").style.transform = "rotate(180deg)";
+            document.getElementById("debug_control_div").style.display = "inline";
+        } else {
+            document.getElementById("debug_toggler").style.transform = "";
+            document.getElementById("debug_control_div").style.display = "none";
+        }
+    };
+    document.getElementById("debug_toggle_div").onclick = toggleDebugCallback;
+    key_itriggers["m"] = toggleDebugCallback;
 
     load_meshes(obj_paths, () => {
         startGame(gl);

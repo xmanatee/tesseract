@@ -19,14 +19,19 @@
 
     <div id="extra_div">
         <div id="debug_div">
-            <p>Fps: <span id="fps_p">0</span></p>
-            <p>Control: [asdw] + mouse</p>
-            <p><button id="easter_btn">Easter[e]</button><button id="binocular_btn">Binocular[b]</button></p>
-            <p><button id="pointerlock_btn">MouseLock[m]</button><button id="hide_btn">Hide[h]</button></p>
-            <p><button id="fullscreen_btn">Fullscreen[f]</button></p>
-            <p><button id="rotate_4d_btn">Rotate4D[r]</button><button id="change_axis_4d_btn">Axis4D[t]</button></p>
-            <p><a href="https://github.com/xmanatee/tesseract">Source</a></p>
-            <div id="status"><p>loading<br><span id="status_cnt"></span></p></div>
+            <div id="debug_control_div">
+                <p>Fps: <span id="fps_p">0</span></p>
+                <p>Control: [asdw] + mouse</p>
+                <p><button id="easter_btn">Easter[e]</button><button id="binocular_btn">Binocular[b]</button></p>
+                <p><button id="pointerlock_btn">MouseLock[m]</button><button id="hide_btn">Hide[h]</button></p>
+                <p><button id="fullscreen_btn">Fullscreen[f]</button></p>
+                <p><button id="rotate_4d_btn">Rotate4D[r]</button><button id="change_axis_4d_btn">Axis4D[t]</button></p>
+                <p><a href="https://github.com/xmanatee/tesseract">Source</a></p>
+            </div>
+            <div id="debug_toggle_div">
+                <img id="debug_toggler" src="resources/icons/toggler.svg" />
+                <div id="status"><p>loading<br><span id="status_cnt"></span></p></div>
+            </div>
         </div>
 
         <div id="left_joystick" class="joystick_div">
