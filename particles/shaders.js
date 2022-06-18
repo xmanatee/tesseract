@@ -24,7 +24,7 @@ const vs_transform_shader = `
     out vec3 v_offset;
     out vec3 v_velocity;
     
-    float rand(vec3 co){
+    mediump float rand(vec3 co){
         return 2.0 * fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 48.1516))) * 43758.5453) - 1.0;
     }
     
@@ -38,7 +38,7 @@ const vs_transform_shader = `
         vec3 offset = a_offset;
 
         vec3 r = offset + u_magnet_center;
-        float dist2surf = length(r) - MAGNET_RADIUS;
+        mediump float dist2surf = length(r) - MAGNET_RADIUS;
         vec3 vec2surf = dist2surf * r / length(r);
         vec3 force = -normalize(vec2surf) * MAGNET_G * pow(abs(dist2surf), 0.4);
         vec3 a = force / a_mass;
@@ -88,8 +88,9 @@ const vs_draw_shader = `
         v_color = a_color;
         vec3 nvelocity = normalize(a_velocity);
 
-        float cos_r = nvelocity.x;
-        float sin_r = nvelocity.y;
+        mediump float cos_r = nvelocity.x;
+        mediump 
+float sin_r = nvelocity.y;
 
         mat2 rot = mat2(
             cos_r, sin_r,
