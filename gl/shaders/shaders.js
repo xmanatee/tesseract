@@ -3,6 +3,8 @@
 //***************
 
 const lights_FragmentShaderConstants = `
+
+
     const highp vec3 RGB_BLACK = vec3(0);
     const highp vec3 RGB_WHITE = vec3(1);
 
@@ -160,6 +162,8 @@ const usualVertexShader = `
 //**********************
 
 const fragmentShaderTemplate = `
+    precision mediump float;
+
     varying highp vec3 vVertexPosition;
     varying highp vec3 vVertexNormal;
     varying highp vec2 vTextureCoord;
