@@ -3,7 +3,7 @@
 //***************
 
 const lights_FragmentShaderConstants = `
-
+    precision mediump float;
 
     const highp vec3 RGB_BLACK = vec3(0);
     const highp vec3 RGB_WHITE = vec3(1);

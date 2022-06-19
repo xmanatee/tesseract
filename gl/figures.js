@@ -1,22 +1,32 @@
 
 const figuresConfig = [
+    {
+        id: "moving_thor",
+        program_id: "looney",
+        surface: {
+            type: "thor",
+            params: [8, 5, {x: 0, y: 0, z: 0}, false],
+            det: [100, 100],
+        },
+        on: true,
+        start_translation: {
+            vec: [-20, -20, 0],
+        },
+        texture_url: "resources/textures/Lava_001_COLOR.png",
+    },
     // {
-    //     id: "thor",
+    //     id: "moving_sphere",
     //     program_id: "looney",
     //     surface: {
-    //         type: "thor",
-    //         params: [8, 5],
-    //         // type: "sphere",
-    //         // params: [8],
+    //         type: "sphere",
+    //         params: [5, {x: 0, y: 0, z: 0}, false],
     //         det: [100, 100],
     //     },
     //     on: true,
-    //     // rotation: {
-    //     //     angle: 0,
-    //     //     vec: [1, 0, 0],
-    //     //     speed: 1,
-    //     // },
-    //     texture_url: "textures/Lava_001_COLOR.png",
+    //     start_translation: {
+    //         vec: [-10, -10, 0],
+    //     },
+    //     texture_url: "resources/textures/Lava_001_COLOR.png",
     // },
     {
         id: "thor4d",
@@ -46,7 +56,7 @@ const figuresConfig = [
         program_id: "globus",
         surface: {
             type: "sphere",
-            params: [40],
+            params: [40, {x: 0, y: 0, z: 0}, false],
             det: [100, 100],
         },
         on: true,

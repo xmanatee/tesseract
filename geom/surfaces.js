@@ -3,23 +3,26 @@ function vec(vec_dict) {
 }
 
 class Sphere {
-    constructor(r, inner=false) {
+    constructor(r, center, inner) {
         this.r = r;
-        this.inner = inner
+        this.center = center;
+        this.inner = inner;
     }
 
     uv_range() {
         return {
-            u_min: 0, u_max: 2 * Math.PI,
-            v_min: - Math.PI / 2, v_max: Math.PI / 2,
-        }
+            u_min: 0,
+            u_max: 2 * Math.PI,
+            v_min: - Math.PI / 2,
+            v_max: Math.PI / 2,
+        };
     }
 
     xyz(u, v) {
         const x = this.r * Math.cos(v) * Math.cos(u);
         const y = this.r * Math.cos(v) * Math.sin(u);
         const z = this.r * Math.sin(v);
-        return {x: x, y: y, z: z};
+        return {x: x + this.center.x, y: y + this.center.y, z: z + this.center.z};
     }
 
     nxyz(u, v) {
@@ -59,9 +62,10 @@ class Sphere {
 }
 
 class Thor {
-    constructor(r_big, r_small, inner=false) {
+    constructor(r_big, r_small, center, inner=false) {
         this.r_big = r_big;
         this.r_small = r_small;
+        this.center = center;
         this.inner = inner;
     }
 
@@ -76,7 +80,7 @@ class Thor {
         const x = (this.r_big + this.r_small * Math.cos(v)) * Math.cos(u);
         const y = (this.r_big + this.r_small * Math.cos(v)) * Math.sin(u);
         const z = this.r_small * Math.sin(v);
-        return {x: x, y: y, z: z};
+        return {x: x + this.center.x, y: y + this.center.y, z: z + this.center.z};
     }
 
     nxyz(u, v) {

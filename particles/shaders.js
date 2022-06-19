@@ -54,9 +54,11 @@ const vs_transform_shader = `
 // UNUSED
 const fs_transform_shader = `
     #version 300 es
+    
+    precision highp float;
+    
     void main()
-    {
-    }
+    {}
 `.trim();
 
 const vs_draw_shader = `
@@ -89,8 +91,7 @@ const vs_draw_shader = `
         vec3 nvelocity = normalize(a_velocity);
 
         mediump float cos_r = nvelocity.x;
-        mediump 
-float sin_r = nvelocity.y;
+        mediump float sin_r = nvelocity.y;
 
         mat2 rot = mat2(
             cos_r, sin_r,
